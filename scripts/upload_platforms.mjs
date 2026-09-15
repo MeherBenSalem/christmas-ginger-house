@@ -337,10 +337,28 @@ async function uploadToModrinth(parsed, workspace, version, changelog, token, dr
   console.log("Modrinth result:", uploaded, "upload(s),", skipped, "skip(s)");
 }
 
+async function resolveCurseForgeCreds(token, apiKey) {
+  // NightBeam local.env sometimes swaps CURSEFORGE_TOKEN / CURSEFORGE_API_KEY names.
+  // Core API wants x-api-key; legacy upload wants X-Api-Token.
+  for (const [coreKey, uploadToken] of [
+    [apiKey, token],
+    [token, apiKey],
+  ]) {
+    const res = await fetch(`https://api.curseforge.com/v1/mods/${CURSEFORGE_ID}`, {
+      headers: { "x-api-key": coreKey, Accept: "application/json" },
+    });
+    if (res.ok) {
+      return { coreKey, uploadToken };
+    }
+  }
+  throw new Error("Neither CURSEFORGE_TOKEN nor CURSEFORGE_API_KEY works as CurseForge Core API key");
+}
+
 async function uploadToCurseForge(parsed, workspace, version, changelog, token, apiKey, dryRun, state) {
   const LOADER_IDS = { fabric: 7499, forge: 7498, neoforge: 10150 };
-  const existing = await fetchExistingCurseForge(apiKey);
-  const ctx = await fetchCurseForgeVersionContext(token, apiKey);
+  const { coreKey, uploadToken } = await resolveCurseForgeCreds(token, apiKey);
+  const existing = await fetchExistingCurseForge(coreKey);
+  const ctx = await fetchCurseForgeVersionContext(uploadToken, coreKey);
   let uploaded = 0;
   let skipped = 0;
   for (const parsedJar of parsed) {
@@ -348,7 +366,7 @@ async function uploadToCurseForge(parsed, workspace, version, changelog, token, 
     if (!loaderId) throw new Error(`Unknown loader for ${parsedJar.name}`);
     const gameId = await resolveCurseForgeGameId(
       parsedJar.game,
-      apiKey,
+      coreKey,
       ctx.legacyFlat,
       ctx.minecraftTypeIds,
     );
@@ -382,7 +400,7 @@ async function uploadToCurseForge(parsed, workspace, version, changelog, token, 
     for (let attempt = 1; attempt <= 4; attempt++) {
       const res = await fetch(
         `https://minecraft.curseforge.com/api/projects/${CURSEFORGE_ID}/upload-file`,
-        { method: "POST", headers: { "X-Api-Token": token }, body: cfForm },
+        { method: "POST", headers: { "X-Api-Token": uploadToken }, body: cfForm },
       );
       lastText = await res.text();
       if (res.ok) {
