@@ -1,0 +1,65 @@
+# Tag publish stub for Christmas Ginger House.
+# Secrets: MODRINTH_TOKEN, CURSEFORGE_TOKEN, CURSEFORGE_API_KEY
+# Prefer local uploads via: node scripts/upload_platforms.mjs --workspace 26.2 --version 1.1.0
+
+name: Publish
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      workspace:
+        description: Version root to build and upload
+        required: true
+        default: "26.2"
+        type: choice
+        options:
+          - "26.1.2"
+          - "26.2"
+      version:
+        description: Mod version (default 1.1.0)
+        required: false
+        default: "1.1.0"
+      dry_run:
+        description: Skip uploads if true
+        required: false
+        default: "false"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build workspace
+        working-directory: ${{ inputs.workspace || '26.2' }}
+        run: |
+          chmod +x gradlew
+          ./gradlew build --no-daemon
+
+      - name: Upload Modrinth + CurseForge
+        if: ${{ inputs.dry_run != 'true' }}
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+          CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
+          CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY }}
+        run: |
+          VERSION="${{ inputs.version || '1.1.0' }}"
+          WORKSPACE="${{ inputs.workspace || '26.2' }}"
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          node scripts/upload_platforms.mjs --workspace "$WORKSPACE" --version "$VERSION"

@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:snowy_slopes",
+    "minecraft:plains",
+    "minecraft:snowy_plains",
+    "minecraft:snowy_taiga",
+    "#minecraft:is_snowy"
+  ]
+}
