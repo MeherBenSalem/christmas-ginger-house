@@ -48,4 +48,3 @@ rootProject.name = 'christmas-ginger-house'
 include('common')
 include('fabric')
 include('neoforge')
-include('forge')
