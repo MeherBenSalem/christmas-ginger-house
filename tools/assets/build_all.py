@@ -1,7 +1,8 @@
-"""Regenerates every texture, model, data file, sound and structure for the 1.20.1 root.
+"""Regenerates every texture, model, data file, sound and structure for each ported root.
 
-    python3 tools/assets/build_all.py            # everything
-    python3 tools/assets/build_all.py --no-sound # skip the (slower) audio synthesis
+    python3 tools/assets/build_all.py                    # every ported root
+    python3 tools/assets/build_all.py --target 1.21.1    # one root
+    python3 tools/assets/build_all.py --no-sound         # skip the (slower) audio synthesis
 """
 import os
 import sys
@@ -17,14 +18,11 @@ import items  # noqa: E402
 import resources  # noqa: E402
 import sounds  # noqa: E402
 import structures  # noqa: E402
+import targets  # noqa: E402
 from pix import frames, hexc, mix, new, save  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
-COMMON = os.path.join(ROOT, '1.20.1', 'common', 'src', 'main', 'resources')
-FORGE = os.path.join(ROOT, '1.20.1', 'forge', 'src', 'main', 'resources')
-ASSETS = os.path.join(COMMON, 'assets', 'christmas_ginger_house')
-DATA = os.path.join(COMMON, 'data', 'christmas_ginger_house')
-TEX = os.path.join(ASSETS, 'textures')
+PORTED = [t for t in targets.TARGETS if os.path.isdir(os.path.join(ROOT, t))]
 
 
 def star_frames(star):
@@ -61,33 +59,50 @@ def icon(size=128):
     return bg.resize((size, size), Image.NEAREST)
 
 
-def main():
-    with_sound = '--no-sound' not in sys.argv
+def build(target, with_sound):
+    common = os.path.join(ROOT, target, 'common', 'src', 'main', 'resources')
+    loader = os.path.join(ROOT, target, targets.TARGETS[target]['loader_data'], 'src', 'main', 'resources')
+    assets = os.path.join(common, 'assets', 'christmas_ginger_house')
+    data = os.path.join(common, 'data', 'christmas_ginger_house')
+    tex = os.path.join(assets, 'textures')
+    modern = targets.TARGETS[target]['components']
     n = 0
     for name, fn in items.ITEMS.items():
-        save(fn(), os.path.join(TEX, 'item', f'{name}.png'))
+        save(fn(), os.path.join(tex, 'item', f'{name}.png'))
         n += 1
     for name, fn in blocks.BLOCKS.items():
-        save(fn(), os.path.join(TEX, 'block', f'{name}.png'))
+        save(fn(), os.path.join(tex, 'block', f'{name}.png'))
         n += 1
-    save(frames(blocks.christmas_lights()), os.path.join(TEX, 'block', 'christmas_lights.png'),
+    save(frames(blocks.christmas_lights()), os.path.join(tex, 'block', 'christmas_lights.png'),
          {'animation': {'frametime': 12, 'interpolate': False}})
-    save(items.wreath_item(), os.path.join(TEX, 'block', 'wreath.png'))
-    save(items.stocking_item(), os.path.join(TEX, 'block', 'stocking.png'))
-    save(star_frames(items.star_item()), os.path.join(TEX, 'block', 'star_topper.png'),
+    save(items.wreath_item(), os.path.join(tex, 'block', 'wreath.png'))
+    save(items.stocking_item(), os.path.join(tex, 'block', 'stocking.png'))
+    save(star_frames(items.star_item()), os.path.join(tex, 'block', 'star_topper.png'),
          {'animation': {'frametime': 3, 'frames': [0, 1, 2, 3, 4, 5, {'index': 0, 'time': 40}]}})
     for name, fn in entities.ENTITIES.items():
-        save(fn(), os.path.join(TEX, f'{name}.png'))
-        n += 4
-    save(icon(), os.path.join(ASSETS, 'icon.png'))
-    save(icon(), os.path.join(COMMON, 'icon.png'))
-    print('textures:', n)
-    print('json files:', resources.generate(COMMON, FORGE))
-    structures.generate(DATA, os.path.join(HERE, 'source', 'house_ginger_original.nbt'))
-    print('structures: 3')
+        img = fn()
+        if modern and name == 'models/armor/santa_hat':
+            name = 'models/armor/santa_hat_layer_1'   # 1.21 armor materials name their layer textures
+        save(img, os.path.join(tex, f'{name}.png'))
+        n += 1
+    save(icon(), os.path.join(assets, 'icon.png'))
+    save(icon(), os.path.join(common, 'icon.png'))
+    print(f'[{target}] textures:', n)
+    print(f'[{target}] json files:', resources.generate(common, loader, target))
+    structures.generate(data, os.path.join(HERE, 'source', 'house_ginger_original.nbt'),
+                        'structure' if targets.TARGETS[target]['singular'] else 'structures')
     if with_sound:
-        count, seconds = sounds.generate(os.path.join(ASSETS, 'sounds'))
-        print(f'sounds: {count} (record {seconds:.1f}s)')
+        count, seconds = sounds.generate(os.path.join(assets, 'sounds'))
+        print(f'[{target}] sounds: {count} (record {seconds:.1f}s)')
+
+
+def main():
+    with_sound = '--no-sound' not in sys.argv
+    wanted = PORTED
+    if '--target' in sys.argv:
+        wanted = [sys.argv[sys.argv.index('--target') + 1]]
+    for target in wanted:
+        build(target, with_sound)
 
 
 if __name__ == '__main__':

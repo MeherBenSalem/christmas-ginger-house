@@ -1,0 +1,31 @@
+{
+  "display": {
+    "icon": {
+      "id": "christmas_ginger_house:star_topper"
+    },
+    "title": {
+      "translate": "advancements.christmas_ginger_house.christmas_eve.title"
+    },
+    "description": {
+      "translate": "advancements.christmas_ginger_house.christmas_eve.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "christmas_eve": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "christmas_eve"
+    ]
+  ],
+  "parent": "christmas_ginger_house:open_advent_door",
+  "rewards": {
+    "experience": 250
+  }
+}

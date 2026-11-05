@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "christmas_ginger_house:gingerbread"
+    },
+    {
+      "item": "christmas_ginger_house:icing"
+    }
+  ],
+  "result": {
+    "id": "christmas_ginger_house:gingerbread_cookie",
+    "count": 2
+  }
+}

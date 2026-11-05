@@ -2,6 +2,8 @@
 import json
 import os
 
+import targets
+
 MOD = 'christmas_ginger_house'
 
 
@@ -10,11 +12,16 @@ def ns(path):
 
 
 class Writer:
-    def __init__(self, root):
+    def __init__(self, root, target='1.20.1', data=False):
         self.root = root
         self.count = 0
+        self.target = target
+        self.data = data
 
     def json(self, rel, data):
+        if self.data:
+            data = targets.translate(rel, data, self.target)
+            rel = targets.translate_path(rel, self.target)
         path = os.path.join(self.root, rel)
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, 'w', encoding='utf-8') as fh:
@@ -132,11 +139,13 @@ LANG = {
 }
 
 
-def generate(common_res, forge_res):
+def generate(common_res, loader_res, target='1.20.1'):
+    """loader_res: resources of the Forge (1.20.1) or NeoForge (1.21+) module."""
     a = Writer(os.path.join(common_res, 'assets', MOD))
-    d = Writer(os.path.join(common_res, 'data', MOD))
-    mc = Writer(os.path.join(common_res, 'data', 'minecraft'))
-    fg = Writer(os.path.join(forge_res, 'data', MOD))
+    d = Writer(os.path.join(common_res, 'data', MOD), target, True)
+    mc = Writer(os.path.join(common_res, 'data', 'minecraft'), target, True)
+    fg = Writer(os.path.join(loader_res, 'data', MOD), target, True)
+    modern = targets.TARGETS[target]['components']
 
     # ------------------------------------------------------------------ simple cubes
     def cube_all(name, tex=None):
@@ -644,4 +653,17 @@ def generate(common_res, forge_res):
     adv('naughty_list', 'root', 'naughty_coal', {'killed': {'trigger': 'minecraft:player_killed_entity', 'conditions': {
         'entity': [{'condition': 'minecraft:entity_properties', 'entity': 'this', 'predicate': {'type': ns('krampus')}}]}}}, frame='goal')
 
+    if modern:
+        # 1.21 jukebox songs are data, and NeoForge reads fuel and compost values from data maps.
+        d.json('jukebox_song/jingle_bells.json', {'sound_event': ns('music_disc.jingle_bells'),
+                                                  'description': {'translate': f'jukebox_song.{MOD}.jingle_bells'},
+                                                  'length_in_seconds': 64.0, 'comparator_output': 12})
+        nf = Writer(os.path.join(loader_res, 'data', 'neoforge'))
+        nf.json('data_maps/item/furnace_fuels.json', {'values': {ns('naughty_coal'): {'burn_time': 3200}}})
+        nf.json('data_maps/item/compostables.json', {'values': {
+            ns('ginger_root'): {'chance': 0.3}, ns('gingerbread_dough'): {'chance': 0.5}, ns('gingerbread'): {'chance': 0.65},
+            ns('gingerbread_cookie'): {'chance': 0.85}, ns('wild_ginger'): {'chance': 0.65}}})
+        lang = dict(LANG)
+        lang[f'jukebox_song.{MOD}.jingle_bells'] = 'J. Pierpont - Jingle Bells (Music Box)'
+        a.json('lang/en_us.json', dict(sorted(lang.items())))
     return a.count + d.count + mc.count + fg.count

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "CC",
+    "CC"
+  ],
+  "key": {
+    "C": {
+      "item": "christmas_ginger_house:candy_cane"
+    }
+  },
+  "result": {
+    "id": "christmas_ginger_house:candy_cane_block",
+    "count": 1
+  }
+}

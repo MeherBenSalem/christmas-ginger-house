@@ -1,0 +1,18 @@
+{
+  "replace": false,
+  "values": [
+    "christmas_ginger_house:gingerbread_block",
+    "christmas_ginger_house:gingerbread_bricks",
+    "christmas_ginger_house:gingerbread_brick_stairs",
+    "christmas_ginger_house:gingerbread_brick_slab",
+    "christmas_ginger_house:gingerbread_brick_wall",
+    "christmas_ginger_house:frosted_gingerbread_bricks",
+    "christmas_ginger_house:gingerbread_door",
+    "christmas_ginger_house:gingerbread_trapdoor",
+    "christmas_ginger_house:advent_calendar",
+    "christmas_ginger_house:red_present",
+    "christmas_ginger_house:green_present",
+    "christmas_ginger_house:blue_present",
+    "christmas_ginger_house:gold_present"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "christmas_ginger_house:block/advent_calendar"
+    },
+    "facing=east": {
+      "model": "christmas_ginger_house:block/advent_calendar",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "christmas_ginger_house:block/advent_calendar",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "christmas_ginger_house:block/advent_calendar",
+      "y": 270
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "display": {
+    "icon": {
+      "id": "christmas_ginger_house:naughty_coal"
+    },
+    "title": {
+      "translate": "advancements.christmas_ginger_house.naughty_list.title"
+    },
+    "description": {
+      "translate": "advancements.christmas_ginger_house.naughty_list.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "killed": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "christmas_ginger_house:krampus"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "killed"
+    ]
+  ],
+  "parent": "christmas_ginger_house:root"
+}

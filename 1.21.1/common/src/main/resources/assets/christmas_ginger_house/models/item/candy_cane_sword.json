@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "christmas_ginger_house:item/candy_cane_sword"
+  }
+}

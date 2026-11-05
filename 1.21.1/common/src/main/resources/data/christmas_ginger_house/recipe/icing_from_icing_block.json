@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "christmas_ginger_house:icing_block"
+    }
+  ],
+  "result": {
+    "id": "christmas_ginger_house:icing",
+    "count": 4
+  }
+}

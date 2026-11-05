@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "hanging=true": {
+      "model": "christmas_ginger_house:block/blue_ornament_hanging"
+    },
+    "hanging=false": {
+      "model": "christmas_ginger_house:block/blue_ornament"
+    }
+  }
+}

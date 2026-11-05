@@ -1,0 +1,41 @@
+{
+  "display": {
+    "icon": {
+      "id": "christmas_ginger_house:frosted_gingerbread_bricks"
+    },
+    "title": {
+      "translate": "advancements.christmas_ginger_house.home_sweet_home.title"
+    },
+    "description": {
+      "translate": "advancements.christmas_ginger_house.home_sweet_home.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "entered": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "structures": "christmas_ginger_house:christmas_ginger_house"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "entered"
+    ]
+  ],
+  "parent": "christmas_ginger_house:root"
+}

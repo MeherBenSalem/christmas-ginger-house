@@ -8,11 +8,23 @@
 import math
 import os
 
+import gzip
+import io
+
 import nbtlib
 from nbtlib import Compound, Int, List, String
 
 MOD = 'christmas_ginger_house'
 DATA_VERSION = 3465  # 1.20.1
+
+
+def save_nbt(root, path):
+    """Gzipped NBT with a zero timestamp, so regenerating gives byte-identical files."""
+    buf = io.BytesIO()
+    nbtlib.File(root).write(buf)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'wb') as fh:
+        fh.write(gzip.compress(buf.getvalue(), mtime=0))
 
 
 class Template:
@@ -49,8 +61,7 @@ class Template:
             'palette': List[Compound](palette),
             'DataVersion': Int(DATA_VERSION),
         })
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        nbtlib.File(root).save(path, gzipped=True)
+        save_nbt(root, path)
 
 
 def present_nbt(table):
@@ -157,7 +168,7 @@ def remap_house(src, dst):
                 del nbt['Items']
             nbt['LootTable'] = String(f'{MOD}:chests/gingerbread_house')
     decorate_house(root)
-    root.save(dst, gzipped=True)
+    save_nbt(root, dst)
 
 
 def decorate_house(root):
@@ -211,8 +222,8 @@ def decorate_house(root):
     print('house decorations: presents', placed)
 
 
-def generate(data_dir, source_house):
-    out = os.path.join(data_dir, 'structures')
+def generate(data_dir, source_house, folder='structures'):
+    out = os.path.join(data_dir, folder)
     christmas_tree(False).save(os.path.join(out, 'christmas_tree.nbt'))
     christmas_tree(True).save(os.path.join(out, 'christmas_tree_gold.nbt'))
     remap_house(source_house, os.path.join(out, 'house_ginger.nbt'))
