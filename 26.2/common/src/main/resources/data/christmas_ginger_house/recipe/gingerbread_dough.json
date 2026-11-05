@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:wheat",
+    "minecraft:wheat",
+    "christmas_ginger_house:ginger_root",
+    "minecraft:sugar"
+  ],
+  "result": {
+    "id": "christmas_ginger_house:gingerbread_dough",
+    "count": 2
+  }
+}

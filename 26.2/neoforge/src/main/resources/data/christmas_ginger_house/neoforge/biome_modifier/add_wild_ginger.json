@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#christmas_ginger_house:has_wild_ginger",
+  "features": "christmas_ginger_house:patch_wild_ginger",
+  "step": "vegetal_decoration"
+}

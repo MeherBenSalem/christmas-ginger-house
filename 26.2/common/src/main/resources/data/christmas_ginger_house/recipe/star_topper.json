@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " N ",
+    "NGN",
+    "N N"
+  ],
+  "key": {
+    "N": "minecraft:gold_nugget",
+    "G": "minecraft:glowstone_dust"
+  },
+  "result": {
+    "id": "christmas_ginger_house:star_topper",
+    "count": 1
+  }
+}

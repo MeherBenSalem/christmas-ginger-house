@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " S ",
+    "GLG",
+    " G "
+  ],
+  "key": {
+    "S": "minecraft:string",
+    "G": "minecraft:gold_nugget",
+    "L": "minecraft:leather"
+  },
+  "result": {
+    "id": "christmas_ginger_house:sleigh_bells",
+    "count": 1
+  }
+}

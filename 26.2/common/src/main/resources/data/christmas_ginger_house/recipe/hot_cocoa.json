@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:cocoa_beans",
+    "minecraft:milk_bucket",
+    "minecraft:sugar",
+    "minecraft:bowl"
+  ],
+  "result": {
+    "id": "christmas_ginger_house:hot_cocoa",
+    "count": 1
+  }
+}

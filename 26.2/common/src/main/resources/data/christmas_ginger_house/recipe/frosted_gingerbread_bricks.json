@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "I",
+    "B"
+  ],
+  "key": {
+    "I": "christmas_ginger_house:icing",
+    "B": "christmas_ginger_house:gingerbread_bricks"
+  },
+  "result": {
+    "id": "christmas_ginger_house:frosted_gingerbread_bricks",
+    "count": 1
+  }
+}

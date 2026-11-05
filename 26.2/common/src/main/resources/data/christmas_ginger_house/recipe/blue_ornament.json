@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " N ",
+    "GDG",
+    " G "
+  ],
+  "key": {
+    "N": "minecraft:gold_nugget",
+    "G": "minecraft:glass_pane",
+    "D": "minecraft:blue_dye"
+  },
+  "result": {
+    "id": "christmas_ginger_house:blue_ornament",
+    "count": 4
+  }
+}

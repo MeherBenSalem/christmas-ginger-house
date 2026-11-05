@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "R R",
+    "GWG",
+    "RRR"
+  ],
+  "key": {
+    "R": "minecraft:red_wool",
+    "G": "minecraft:green_wool",
+    "W": "minecraft:white_wool"
+  },
+  "result": {
+    "id": "christmas_ginger_house:festive_sweater",
+    "count": 1
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:sugar",
+    "minecraft:sugar",
+    "minecraft:red_dye"
+  ],
+  "result": {
+    "id": "christmas_ginger_house:candy_cane",
+    "count": 2
+  }
+}

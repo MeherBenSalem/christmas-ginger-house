@@ -15,15 +15,6 @@
               "blocks": [
                 {
                   "Name": "minecraft:structure_block"
-                },
-                {
-                  "Name": "minecraft:air"
-                },
-                {
-                  "Name": "minecraft:void_air"
-                },
-                {
-                  "Name": "minecraft:cave_air"
                 }
               ]
             }

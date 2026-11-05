@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "christmas_ginger_house:block/advent_calendar_front",
+    "side": "christmas_ginger_house:block/advent_calendar_side",
+    "top": "christmas_ginger_house:block/advent_calendar_top"
+  }
+}

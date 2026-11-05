@@ -15,8 +15,9 @@ TARGETS = {
     # 26.x: string ingredients, item model definitions, equipment assets, no random_patch.
     '26.1.2': {'pack_format': None, 'data_version': 4790, 'singular': True, 'components': True,
                'loader_data': 'neoforge', 'v26': True},
-    '26.2': {'pack_format': None, 'data_version': 4790, 'singular': True, 'components': True,
-             'loader_data': 'neoforge', 'v26': True},
+    # 26.2 also renamed the entity predicate's "type" field to "minecraft:entity_type".
+    '26.2': {'pack_format': None, 'data_version': 4903, 'singular': True, 'components': True,
+             'loader_data': 'neoforge', 'v26': True, 'entity_type_key': True},
 }
 
 
@@ -132,6 +133,15 @@ def translate(rel, data, target):
                 node['location'] = {'structures': node['location']['structure']}
             return node
         data = _walk(data, loc)
+        if t.get('entity_type_key'):
+            def entity_type(node):
+                if node.get('condition') == 'minecraft:entity_properties' and 'type' in node.get('predicate', {}):
+                    node = dict(node)
+                    pred = dict(node['predicate'])
+                    pred['minecraft:entity_type'] = pred.pop('type')
+                    node['predicate'] = pred
+                return node
+            data = _walk(data, entity_type)
     if rel.startswith('forge/biome_modifier/') and t['loader_data'] == 'neoforge':
         data['type'] = data['type'].replace('forge:', 'neoforge:')
     return data

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BBB"
+  ],
+  "key": {
+    "B": "christmas_ginger_house:gingerbread_bricks"
+  },
+  "result": {
+    "id": "christmas_ginger_house:gingerbread_brick_slab",
+    "count": 6
+  }
+}

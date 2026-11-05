@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "LLL",
+    "L L",
+    "LRL"
+  ],
+  "key": {
+    "L": "minecraft:spruce_leaves",
+    "R": "minecraft:red_dye"
+  },
+  "result": {
+    "id": "christmas_ginger_house:wreath",
+    "count": 1
+  }
+}

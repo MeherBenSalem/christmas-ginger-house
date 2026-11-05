@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "WW ",
+    "RR ",
+    "RRR"
+  ],
+  "key": {
+    "W": "minecraft:white_wool",
+    "R": "minecraft:red_wool"
+  },
+  "result": {
+    "id": "christmas_ginger_house:stocking",
+    "count": 1
+  }
+}

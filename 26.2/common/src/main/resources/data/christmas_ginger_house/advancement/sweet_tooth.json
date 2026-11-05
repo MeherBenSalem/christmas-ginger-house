@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "christmas_ginger_house:candy_cane"
+    },
+    "title": {
+      "translate": "advancements.christmas_ginger_house.sweet_tooth.title"
+    },
+    "description": {
+      "translate": "advancements.christmas_ginger_house.sweet_tooth.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "ate": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": [
+            "christmas_ginger_house:candy_cane"
+          ]
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "ate"
+    ]
+  ],
+  "parent": "christmas_ginger_house:root"
+}

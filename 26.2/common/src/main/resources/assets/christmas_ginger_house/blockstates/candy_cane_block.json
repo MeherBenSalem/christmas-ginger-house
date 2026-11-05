@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "christmas_ginger_house:block/candy_cane_block"
+    },
+    "axis=z": {
+      "model": "christmas_ginger_house:block/candy_cane_block_horizontal",
+      "x": 90
+    },
+    "axis=x": {
+      "model": "christmas_ginger_house:block/candy_cane_block_horizontal",
+      "x": 90,
+      "y": 90
+    }
+  }
+}
