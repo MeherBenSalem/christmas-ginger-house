@@ -1,6 +1,6 @@
 # Tag publish stub for Christmas Ginger House.
 # Secrets: MODRINTH_TOKEN, CURSEFORGE_TOKEN, CURSEFORGE_API_KEY
-# Prefer local uploads via: node scripts/upload_platforms.mjs --workspace 26.2 --version 1.1.0
+# Prefer local uploads via: node scripts/upload_platforms.mjs --workspace 26.2 --version 2.0.0
 
 name: Publish
 
@@ -23,7 +23,7 @@ on:
       version:
         description: Mod version
         required: false
-        default: "1.1.0"
+        default: "2.0.0"
       dry_run:
         description: Skip uploads if true
         required: false
@@ -69,7 +69,7 @@ jobs:
           CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
           CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY }}
         run: |
-          VERSION="${{ inputs.version || '1.1.0' }}"
+          VERSION="${{ inputs.version || '2.0.0' }}"
           WORKSPACE="${{ inputs.workspace || '26.2' }}"
           if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
             VERSION="${GITHUB_REF_NAME#v}"

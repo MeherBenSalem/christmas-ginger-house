@@ -18,7 +18,7 @@ Image links point at `raw.githubusercontent.com/MeherBenSalem/christmas-ginger-h
 
 The supported versions are listed in exactly two places:
 
-1. `VERSIONS` at the top of [`source/render.cjs`](source/render.cjs). Add one line, for example `{ minecraft: '1.21.1', loaders: ['Fabric', 'NeoForge'] },`, then rerun the script for `banner`.
+1. `VERSIONS` at the top of [`source/render.cjs`](source/render.cjs). Add one line, for example `{ minecraft: '26.3', loaders: ['Fabric', 'NeoForge'] },`, then rerun the script for `banner`.
 2. The table under **Downloads & Compatibility** in `curseforge/description.md`.
 
 ## Images
@@ -46,7 +46,7 @@ The supported versions are listed in exactly two places:
 
 ### How the screenshots were captured
 
-Every screenshot and both GIFs are unedited captures of the **1.20.1 Fabric development client** (`./gradlew :fabric:runClient`, Christmas Ginger House 2.0.0, default configuration) with software rendering (Mesa llvmpipe on Xvfb) and GUI scale 3, HUD hidden unless a menu is shown.
+Every screenshot and both GIFs are unedited captures of the **1.20.1 Fabric development client** (the same scenes were checked on every other version and loader) (`./gradlew :fabric:runClient`, Christmas Ginger House 2.0.0, default configuration) with software rendering (Mesa llvmpipe on Xvfb) and GUI scale 3, HUD hidden unless a menu is shown.
 
 - **World:** a regular world. `christmas-tree-taiga.jpg` and `gingerbread-house-worldgen.jpg` are the structures exactly as they generated. The other scenes were set up on a flattened patch of snowy taiga with `/place template` (the same templates worldgen uses) and `/setblock` for the decorated facade, farm and block sampler.
 - **Creatures** were summoned with `NoAI` so they hold their pose. The red-nosed reindeer has `RedNose:1b`.
