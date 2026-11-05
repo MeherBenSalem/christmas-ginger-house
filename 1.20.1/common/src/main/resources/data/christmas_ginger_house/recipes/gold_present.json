@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " S ",
+    "PDP",
+    "PPP"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:string"
+    },
+    "P": {
+      "item": "minecraft:paper"
+    },
+    "D": {
+      "item": "minecraft:gold_nugget"
+    }
+  },
+  "result": {
+    "item": "christmas_ginger_house:gold_present",
+    "count": 1
+  },
+  "group": "presents"
+}

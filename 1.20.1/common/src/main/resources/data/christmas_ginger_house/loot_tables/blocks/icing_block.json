@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "christmas_ginger_house:blocks/icing_block",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "christmas_ginger_house:icing_block"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
+    }
+  ]
+}

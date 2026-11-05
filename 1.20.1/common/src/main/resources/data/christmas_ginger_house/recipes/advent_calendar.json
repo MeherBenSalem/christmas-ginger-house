@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SSS",
+    "SCS",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:spruce_planks"
+    },
+    "C": {
+      "item": "christmas_ginger_house:gingerbread_cookie"
+    }
+  },
+  "result": {
+    "item": "christmas_ginger_house:advent_calendar",
+    "count": 1
+  }
+}

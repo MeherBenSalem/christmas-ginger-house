@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "christmas_ginger_house:red_present"
+    },
+    "title": {
+      "translate": "advancements.christmas_ginger_house.unwrap_present.title"
+    },
+    "description": {
+      "translate": "advancements.christmas_ginger_house.unwrap_present.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "unwrap_present": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "unwrap_present"
+    ]
+  ],
+  "parent": "christmas_ginger_house:root"
+}

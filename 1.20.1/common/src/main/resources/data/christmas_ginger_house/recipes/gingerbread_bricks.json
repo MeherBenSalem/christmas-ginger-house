@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GG",
+    "GG"
+  ],
+  "key": {
+    "G": {
+      "item": "christmas_ginger_house:gingerbread_block"
+    }
+  },
+  "result": {
+    "item": "christmas_ginger_house:gingerbread_bricks",
+    "count": 4
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "christmas_ginger_house:wild_ginger"
+    }
+  ],
+  "result": {
+    "item": "christmas_ginger_house:ginger_root",
+    "count": 2
+  }
+}

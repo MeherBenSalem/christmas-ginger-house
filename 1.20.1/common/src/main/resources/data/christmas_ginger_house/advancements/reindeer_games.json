@@ -1,0 +1,39 @@
+{
+  "display": {
+    "icon": {
+      "item": "christmas_ginger_house:sleigh_bells"
+    },
+    "title": {
+      "translate": "advancements.christmas_ginger_house.reindeer_games.title"
+    },
+    "description": {
+      "translate": "advancements.christmas_ginger_house.reindeer_games.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "bred": {
+      "trigger": "minecraft:bred_animals",
+      "conditions": {
+        "child": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "christmas_ginger_house:reindeer"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "bred"
+    ]
+  ],
+  "parent": "christmas_ginger_house:root"
+}

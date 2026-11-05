@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "food",
+  "ingredient": {
+    "item": "christmas_ginger_house:gingerbread_dough"
+  },
+  "result": "christmas_ginger_house:gingerbread",
+  "experience": 0.35,
+  "cookingtime": 600
+}

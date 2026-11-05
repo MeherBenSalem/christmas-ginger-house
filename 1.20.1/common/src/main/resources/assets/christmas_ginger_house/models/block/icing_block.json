@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "christmas_ginger_house:block/icing_block"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "christmas_ginger_house:block/christmas_lights"
+    },
+    "facing=east": {
+      "model": "christmas_ginger_house:block/christmas_lights",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "christmas_ginger_house:block/christmas_lights",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "christmas_ginger_house:block/christmas_lights",
+      "y": 270
+    }
+  }
+}

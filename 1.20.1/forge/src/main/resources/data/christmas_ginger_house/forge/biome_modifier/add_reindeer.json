@@ -1,0 +1,10 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": "#christmas_ginger_house:spawns_reindeer",
+  "spawners": {
+    "type": "christmas_ginger_house:reindeer",
+    "weight": 8,
+    "minCount": 2,
+    "maxCount": 4
+  }
+}

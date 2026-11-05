@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/door_top_left",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "top": "christmas_ginger_house:block/gingerbread_door_top",
+    "bottom": "christmas_ginger_house:block/gingerbread_door_bottom"
+  }
+}

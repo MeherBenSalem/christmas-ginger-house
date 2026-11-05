@@ -1,0 +1,76 @@
+{
+  "display": {
+    "icon": {
+      "item": "christmas_ginger_house:gingerbread_cookie"
+    },
+    "title": {
+      "translate": "advancements.christmas_ginger_house.root.title"
+    },
+    "description": {
+      "translate": "advancements.christmas_ginger_house.root.description"
+    },
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false,
+    "background": "minecraft:textures/block/snow.png"
+  },
+  "criteria": {
+    "ginger_root": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "christmas_ginger_house:ginger_root"
+            ]
+          }
+        ]
+      }
+    },
+    "gingerbread": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "christmas_ginger_house:gingerbread"
+            ]
+          }
+        ]
+      }
+    },
+    "cookie": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "christmas_ginger_house:gingerbread_cookie"
+            ]
+          }
+        ]
+      }
+    },
+    "candy_cane": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "christmas_ginger_house:candy_cane"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "ginger_root",
+      "gingerbread",
+      "cookie",
+      "candy_cane"
+    ]
+  ]
+}

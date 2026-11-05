@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "II",
+    "II"
+  ],
+  "key": {
+    "I": {
+      "item": "christmas_ginger_house:icing"
+    }
+  },
+  "result": {
+    "item": "christmas_ginger_house:icing_block",
+    "count": 1
+  }
+}

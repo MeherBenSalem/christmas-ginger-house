@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "christmas_ginger_house:christmas_tree",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 28,
+    "separation": 10,
+    "salt": 1225202512
+  }
+}

@@ -40,3 +40,7 @@ secrets/local.env
 # Local build dumps / upload tracking (optional keep when intentional)
 all-jars/
 # .release-upload-state.json is tracked for idempotent re-uploads
+
+# Python caches and render scratch
+__pycache__/
+marketing/source/.render-*
