@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "christmas_ginger_house:item/reindeer_spawn_egg",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 8870202
+      },
+      {
+        "type": "minecraft:constant",
+        "value": 14929840
+      }
+    ]
+  }
+}

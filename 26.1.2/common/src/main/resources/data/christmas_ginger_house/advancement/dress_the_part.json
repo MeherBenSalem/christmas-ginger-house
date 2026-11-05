@@ -1,0 +1,42 @@
+{
+  "display": {
+    "icon": {
+      "id": "christmas_ginger_house:santa_hat"
+    },
+    "title": {
+      "translate": "advancements.christmas_ginger_house.dress_the_part.title"
+    },
+    "description": {
+      "translate": "advancements.christmas_ginger_house.dress_the_part.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "outfit": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "christmas_ginger_house:santa_hat"
+            ]
+          },
+          {
+            "items": [
+              "christmas_ginger_house:festive_sweater"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "outfit"
+    ]
+  ],
+  "parent": "christmas_ginger_house:deck_the_halls"
+}

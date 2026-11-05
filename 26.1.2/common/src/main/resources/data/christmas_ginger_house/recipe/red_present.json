@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " S ",
+    "PDP",
+    "PPP"
+  ],
+  "key": {
+    "S": "minecraft:string",
+    "P": "minecraft:paper",
+    "D": "minecraft:red_dye"
+  },
+  "result": {
+    "id": "christmas_ginger_house:red_present",
+    "count": 1
+  },
+  "group": "presents"
+}

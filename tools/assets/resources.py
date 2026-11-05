@@ -276,7 +276,7 @@ def generate(common_res, loader_res, target='1.20.1'):
 
     for c in ORNAMENTS:
         tex = {'ball': ns(f'block/{c}_ornament'), 'cap': ns('block/ornament_cap'), 'particle': ns(f'block/{c}_ornament'),
-               'string': 'minecraft:block/chain'}
+               'string': 'minecraft:block/iron_chain' if targets.v26(target) else 'minecraft:block/chain'}
         hang = bauble(6)
         hang.append({'from': [7.5, 14, 8], 'to': [8.5, 16, 8], 'shade': False,
                      'faces': {'north': {'uv': [6, 0, 7, 2], 'texture': '#string'}, 'south': {'uv': [6, 0, 7, 2], 'texture': '#string'}}})
@@ -578,16 +578,29 @@ def generate(common_res, loader_res, target='1.20.1'):
     tag(d, 'worldgen/biome/has_structure/christmas_tree', snowy + ['minecraft:taiga', 'minecraft:snowy_slopes'])
 
     # ------------------------------------------------------------------ worldgen
-    d.json('worldgen/configured_feature/patch_wild_ginger.json', {'type': 'minecraft:random_patch', 'config': {
-        'tries': 24, 'xz_spread': 6, 'y_spread': 2, 'feature': {
-            'feature': {'type': 'minecraft:simple_block', 'config': {'to_place': {'type': 'minecraft:simple_state_provider',
-                                                                                  'state': {'Name': ns('wild_ginger')}}}},
-            'placement': [{'type': 'minecraft:block_predicate_filter', 'predicate': {'type': 'minecraft:all_of', 'predicates': [
-                {'type': 'minecraft:matching_blocks', 'blocks': 'minecraft:air'},
-                {'type': 'minecraft:would_survive', 'state': {'Name': ns('wild_ginger')}}]}}]}}})
-    d.json('worldgen/placed_feature/patch_wild_ginger.json', {'feature': ns('patch_wild_ginger'), 'placement': [
-        {'type': 'minecraft:rarity_filter', 'chance': 5}, {'type': 'minecraft:in_square'},
-        {'type': 'minecraft:heightmap', 'heightmap': 'MOTION_BLOCKING'}, {'type': 'minecraft:biome'}]})
+    if targets.v26(target):
+        d.json('worldgen/configured_feature/wild_ginger.json', {'type': 'minecraft:simple_block', 'config': {
+            'to_place': {'type': 'minecraft:simple_state_provider', 'state': {'Name': ns('wild_ginger')}}}})
+        trapezoid = lambda r: {'type': 'minecraft:trapezoid', 'min': -r, 'max': r, 'plateau': 0}
+        d.json('worldgen/placed_feature/patch_wild_ginger.json', {'feature': ns('wild_ginger'), 'placement': [
+            {'type': 'minecraft:rarity_filter', 'chance': 5}, {'type': 'minecraft:in_square'},
+            {'type': 'minecraft:heightmap', 'heightmap': 'MOTION_BLOCKING'}, {'type': 'minecraft:biome'},
+            {'type': 'minecraft:count', 'count': 24},
+            {'type': 'minecraft:random_offset', 'xz_spread': trapezoid(6), 'y_spread': trapezoid(2)},
+            {'type': 'minecraft:block_predicate_filter', 'predicate': {'type': 'minecraft:all_of', 'predicates': [
+                {'type': 'minecraft:matching_block_tag', 'tag': 'minecraft:air'},
+                {'type': 'minecraft:would_survive', 'state': {'Name': ns('wild_ginger')}}]}}]})
+    else:
+        d.json('worldgen/configured_feature/patch_wild_ginger.json', {'type': 'minecraft:random_patch', 'config': {
+            'tries': 24, 'xz_spread': 6, 'y_spread': 2, 'feature': {
+                'feature': {'type': 'minecraft:simple_block', 'config': {'to_place': {'type': 'minecraft:simple_state_provider',
+                                                                                      'state': {'Name': ns('wild_ginger')}}}},
+                'placement': [{'type': 'minecraft:block_predicate_filter', 'predicate': {'type': 'minecraft:all_of', 'predicates': [
+                    {'type': 'minecraft:matching_blocks', 'blocks': 'minecraft:air'},
+                    {'type': 'minecraft:would_survive', 'state': {'Name': ns('wild_ginger')}}]}}]}}})
+        d.json('worldgen/placed_feature/patch_wild_ginger.json', {'feature': ns('patch_wild_ginger'), 'placement': [
+            {'type': 'minecraft:rarity_filter', 'chance': 5}, {'type': 'minecraft:in_square'},
+            {'type': 'minecraft:heightmap', 'heightmap': 'MOTION_BLOCKING'}, {'type': 'minecraft:biome'}]})
 
     def structure(name, pool, size_y_proj='WORLD_SURFACE_WG', adapt='beard_thin', spacing=40, sep=16, salt=0):
         d.json(f'worldgen/structure/{name}.json', {
@@ -653,6 +666,25 @@ def generate(common_res, loader_res, target='1.20.1'):
     adv('naughty_list', 'root', 'naughty_coal', {'killed': {'trigger': 'minecraft:player_killed_entity', 'conditions': {
         'entity': [{'condition': 'minecraft:entity_properties', 'entity': 'this', 'predicate': {'type': ns('krampus')}}]}}}, frame='goal')
 
+    if targets.v26(target):
+        for e, (base, spots) in {'gingerbread_man': (0xB5682C, 0xF7FBFF), 'reindeer': (0x87593A, 0xE3CFB0),
+                                 'krampus': (0x24160E, 0xCF2337)}.items():
+            a.json(f'models/item/{e}_spawn_egg.json', {'parent': 'minecraft:item/generated', 'textures': {
+                'layer0': ns('item/spawn_egg'), 'layer1': ns('item/spawn_egg_overlay')}})
+        models_dir = os.path.join(a.root, 'models', 'item')
+        for f in sorted(os.listdir(models_dir)):
+            name = f[:-5]
+            definition = {'model': {'type': 'minecraft:model', 'model': ns(f'item/{name}')}}
+            if name.endswith('_spawn_egg'):
+                base, spots = {'gingerbread_man': (0xB5682C, 0xF7FBFF), 'reindeer': (0x87593A, 0xE3CFB0),
+                               'krampus': (0x24160E, 0xCF2337)}[name[:-len('_spawn_egg')]]
+                definition['model']['tints'] = [{'type': 'minecraft:constant', 'value': base},
+                                                {'type': 'minecraft:constant', 'value': spots}]
+            a.json(f'items/{name}.json', definition)
+        a.json('equipment/santa_hat.json', {'layers': {'humanoid': [{'texture': ns('santa_hat')}]}})
+        a.json('equipment/festive.json', {'layers': {'humanoid': [{'texture': ns('festive')}]}})
+        tag(d, 'items/candy_cane_repairs', ['candy_cane'])
+        tag(d, 'items/festive_armor_repairs', ['#minecraft:wool'])
     if modern:
         # 1.21 jukebox songs are data, and NeoForge reads fuel and compost values from data maps.
         d.json('jukebox_song/jingle_bells.json', {'sound_event': ns('music_disc.jingle_bells'),

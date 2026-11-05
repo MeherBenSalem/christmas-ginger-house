@@ -1,0 +1,19 @@
+{
+  "values": {
+    "christmas_ginger_house:ginger_root": {
+      "chance": 0.3
+    },
+    "christmas_ginger_house:gingerbread_dough": {
+      "chance": 0.5
+    },
+    "christmas_ginger_house:gingerbread": {
+      "chance": 0.65
+    },
+    "christmas_ginger_house:gingerbread_cookie": {
+      "chance": 0.85
+    },
+    "christmas_ginger_house:wild_ginger": {
+      "chance": 0.65
+    }
+  }
+}

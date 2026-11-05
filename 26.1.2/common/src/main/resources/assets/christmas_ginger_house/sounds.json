@@ -1,0 +1,83 @@
+{
+  "item.sleigh_bells.ring": {
+    "sounds": [
+      "christmas_ginger_house:sleigh_bells1",
+      "christmas_ginger_house:sleigh_bells2"
+    ],
+    "subtitle": "subtitles.christmas_ginger_house.item.sleigh_bells.ring"
+  },
+  "block.present.unwrap": {
+    "sounds": [
+      "christmas_ginger_house:present_unwrap1",
+      "christmas_ginger_house:present_unwrap2"
+    ],
+    "subtitle": "subtitles.christmas_ginger_house.block.present.unwrap"
+  },
+  "block.present.wrap": {
+    "sounds": [
+      "christmas_ginger_house:present_wrap"
+    ],
+    "subtitle": "subtitles.christmas_ginger_house.block.present.wrap"
+  },
+  "block.advent_calendar.open": {
+    "sounds": [
+      "christmas_ginger_house:advent_open"
+    ],
+    "subtitle": "subtitles.christmas_ginger_house.block.advent_calendar.open"
+  },
+  "entity.gingerbread_man.ambient": {
+    "sounds": [
+      "christmas_ginger_house:gingerbread_giggle1",
+      "christmas_ginger_house:gingerbread_giggle2"
+    ],
+    "subtitle": "subtitles.christmas_ginger_house.entity.gingerbread_man.ambient"
+  },
+  "entity.gingerbread_man.hurt": {
+    "sounds": [
+      "christmas_ginger_house:gingerbread_crunch1",
+      "christmas_ginger_house:gingerbread_crunch2"
+    ],
+    "subtitle": "subtitles.christmas_ginger_house.entity.gingerbread_man.hurt"
+  },
+  "entity.gingerbread_man.death": {
+    "sounds": [
+      "christmas_ginger_house:gingerbread_crumble"
+    ],
+    "subtitle": "subtitles.christmas_ginger_house.entity.gingerbread_man.death"
+  },
+  "entity.krampus.ambient": {
+    "sounds": [
+      "christmas_ginger_house:krampus_toll1",
+      "christmas_ginger_house:krampus_toll2"
+    ],
+    "subtitle": "subtitles.christmas_ginger_house.entity.krampus.ambient"
+  },
+  "entity.krampus.hurt": {
+    "sounds": [
+      "christmas_ginger_house:krampus_hurt1",
+      "christmas_ginger_house:krampus_hurt2"
+    ],
+    "subtitle": "subtitles.christmas_ginger_house.entity.krampus.hurt"
+  },
+  "entity.krampus.death": {
+    "sounds": [
+      "christmas_ginger_house:krampus_death"
+    ],
+    "subtitle": "subtitles.christmas_ginger_house.entity.krampus.death"
+  },
+  "entity.krampus.chains": {
+    "sounds": [
+      "christmas_ginger_house:krampus_chains1",
+      "christmas_ginger_house:krampus_chains2"
+    ],
+    "subtitle": "subtitles.christmas_ginger_house.entity.krampus.chains"
+  },
+  "music_disc.jingle_bells": {
+    "sounds": [
+      {
+        "name": "christmas_ginger_house:records/jingle_bells",
+        "stream": true
+      }
+    ]
+  }
+}

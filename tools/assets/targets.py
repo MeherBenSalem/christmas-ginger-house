@@ -12,7 +12,25 @@ TARGETS = {
                'loader_data': 'forge'},
     '1.21.1': {'pack_format': 48, 'data_version': 3955, 'singular': True, 'components': True,
                'loader_data': 'neoforge'},
+    # 26.x: string ingredients, item model definitions, equipment assets, no random_patch.
+    '26.1.2': {'pack_format': None, 'data_version': 4790, 'singular': True, 'components': True,
+               'loader_data': 'neoforge', 'v26': True},
+    '26.2': {'pack_format': None, 'data_version': 4790, 'singular': True, 'components': True,
+             'loader_data': 'neoforge', 'v26': True},
 }
+
+
+def v26(target):
+    return TARGETS[target].get('v26', False)
+
+
+def _ingredient(value):
+    if isinstance(value, dict):
+        if 'item' in value:
+            return value['item']
+        if 'tag' in value:
+            return '#' + value['tag']
+    return value
 
 FOLDERS = [('loot_tables/', 'loot_table/'), ('recipes/', 'recipe/'), ('advancements/', 'advancement/'),
            ('tags/blocks/', 'tags/block/'), ('tags/items/', 'tags/item/'), ('tags/entity_types/', 'tags/entity_type/'),
@@ -69,10 +87,32 @@ def _components(node):
     return node
 
 
+RENAMED_26 = {'minecraft:chain': 'minecraft:iron_chain'}
+
+
+def _rename_26(node):
+    if isinstance(node, dict):
+        return {k: _rename_26(v) for k, v in node.items()}
+    if isinstance(node, list):
+        return [_rename_26(v) for v in node]
+    if isinstance(node, str):
+        return RENAMED_26.get(node, node)
+    return node
+
+
 def translate(rel, data, target):
     t = TARGETS[target]
+    if t.get('v26'):
+        data = _rename_26(data)
     if not t['components']:
         return data
+    if rel.startswith('recipes/') and t.get('v26'):
+        if 'key' in data:
+            data['key'] = {k: _ingredient(v) for k, v in data['key'].items()}
+        if 'ingredients' in data:
+            data['ingredients'] = [_ingredient(v) for v in data['ingredients']]
+        if 'ingredient' in data:
+            data['ingredient'] = _ingredient(data['ingredient'])
     if '/recipes/' in '/' + rel or rel.startswith('recipes/'):
         res = data.get('result')
         if isinstance(res, dict) and 'item' in res:

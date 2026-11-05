@@ -12,10 +12,14 @@
     "sources": "https://github.com/MeherBenSalem/christmas-ginger-house"
   },
   "license": "${license}",
+  "icon": "assets/christmas_ginger_house/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
       "tn.nightbeam.christmasgingerhouse.ChristmasGingerHouseMod"
+    ],
+    "client": [
+      "tn.nightbeam.christmasgingerhouse.ChristmasGingerHouseClient"
     ]
   },
   "depends": {

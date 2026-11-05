@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "christmas_ginger_house:block/star_topper"
+    },
+    "facing=east": {
+      "model": "christmas_ginger_house:block/star_topper",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "christmas_ginger_house:block/star_topper",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "christmas_ginger_house:block/star_topper",
+      "y": 270
+    }
+  }
+}

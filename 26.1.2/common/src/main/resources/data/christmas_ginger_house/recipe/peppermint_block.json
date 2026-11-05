@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SRS",
+    "RSR",
+    "SRS"
+  ],
+  "key": {
+    "S": "minecraft:sugar",
+    "R": "minecraft:red_dye"
+  },
+  "result": {
+    "id": "christmas_ginger_house:peppermint_block",
+    "count": 4
+  }
+}

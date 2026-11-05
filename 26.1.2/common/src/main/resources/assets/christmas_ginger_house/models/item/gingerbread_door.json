@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "christmas_ginger_house:item/gingerbread_door"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "christmas_ginger_house:block/candy_cane_block_top",
+    "side": "christmas_ginger_house:block/candy_cane_block"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "christmas_ginger_house:item/gingerbread_man_spawn_egg",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 11888684
+      },
+      {
+        "type": "minecraft:constant",
+        "value": 16251903
+      }
+    ]
+  }
+}

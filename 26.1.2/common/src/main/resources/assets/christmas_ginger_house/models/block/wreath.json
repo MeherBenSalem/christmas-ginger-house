@@ -1,0 +1,44 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "tex": "christmas_ginger_house:block/wreath",
+    "particle": "christmas_ginger_house:block/wreath"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        14.2
+      ],
+      "to": [
+        16,
+        16,
+        15.0
+      ],
+      "shade": true,
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#tex"
+        },
+        "south": {
+          "uv": [
+            16,
+            0,
+            0,
+            16
+          ],
+          "texture": "#tex"
+        }
+      }
+    }
+  ]
+}

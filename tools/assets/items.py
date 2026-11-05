@@ -436,3 +436,50 @@ def gingerbread_door_item():
 
 
 ITEMS['gingerbread_door'] = gingerbread_door_item
+
+
+GRAY = ['#2b2b2b', '#5a5a5a', '#8a8a8a', '#b4b4b4', '#d9d9d9', '#ffffff']
+
+
+def spawn_egg():
+    """Grayscale egg shell; tinted per mob by the item model (26.x spawn eggs are plain items)."""
+    return sprite([
+        '................',
+        '................',
+        '.......eee......',
+        '......eEEee.....',
+        '.....eEEeeee....',
+        '.....eEeeeee....',
+        '....eEeeeeeee...',
+        '....eEeeeeeee...',
+        '....eeeeeeeee...',
+        '...eeeeeeeeeee..',
+        '...eeeeeeeeeee..',
+        '...eeeeeeeeeee..',
+        '....eeeeeeeee...',
+        '.....eeeeeee....',
+        '......eeeee.....',
+        '................',
+    ], {'e': GRAY}, base=4)
+
+
+def spawn_egg_overlay():
+    """Spots for the second tint layer: a snowflake pattern, so the eggs read as festive."""
+    return sprite([
+        '................',
+        '................',
+        '................',
+        '................',
+        '........s.......',
+        '......s...s.....',
+        '.......sss......',
+        '..........s.....',
+        '.....s...sss....',
+        '....sss...s.....',
+        '.....s......s...',
+        '........s..sss..',
+        '.......sss..s...',
+        '........s.......',
+        '................',
+        '................',
+    ], {'s': GRAY}, base=4, outline=False, shade=False)

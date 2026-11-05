@@ -79,12 +79,21 @@ def build(target, with_sound):
     save(items.stocking_item(), os.path.join(tex, 'block', 'stocking.png'))
     save(star_frames(items.star_item()), os.path.join(tex, 'block', 'star_topper.png'),
          {'animation': {'frametime': 3, 'frames': [0, 1, 2, 3, 4, 5, {'index': 0, 'time': 40}]}})
+    v26 = targets.v26(target)
     for name, fn in entities.ENTITIES.items():
         img = fn()
-        if modern and name == 'models/armor/santa_hat':
+        if v26 and name.startswith('models/armor/'):
+            # 26.x equipment assets read textures/entity/equipment/<layer type>/<texture>.png
+            name = {'models/armor/santa_hat': 'entity/equipment/humanoid/santa_hat',
+                    'models/armor/festive_layer_1': 'entity/equipment/humanoid/festive'}[name]
+        elif modern and name == 'models/armor/santa_hat':
             name = 'models/armor/santa_hat_layer_1'   # 1.21 armor materials name their layer textures
         save(img, os.path.join(tex, f'{name}.png'))
         n += 1
+    if v26:
+        # 26.x spawn eggs are plain items: a grey shell and spots, tinted per mob by the item definition.
+        save(items.spawn_egg(), os.path.join(tex, 'item', 'spawn_egg.png'))
+        save(items.spawn_egg_overlay(), os.path.join(tex, 'item', 'spawn_egg_overlay.png'))
     save(icon(), os.path.join(assets, 'icon.png'))
     save(icon(), os.path.join(common, 'icon.png'))
     print(f'[{target}] textures:', n)
