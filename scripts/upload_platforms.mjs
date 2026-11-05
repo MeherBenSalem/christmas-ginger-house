@@ -249,7 +249,8 @@ function createModrinthDescriptor(parsedJar, version, changelog) {
     name: `${version} · ${parsedJar.loader} · ${parsedJar.game}`,
     version_number: `${version}+${parsedJar.loader}-${parsedJar.game}`,
     changelog,
-    dependencies: [],
+    // Fabric builds need Fabric API (Modrinth project P7dR8mSH).
+    dependencies: parsedJar.loader === "fabric" ? [{ project_id: "P7dR8mSH", dependency_type: "required" }] : [],
     game_versions: [parsedJar.game],
     version_type: "release",
     loaders: [parsedJar.loader],
@@ -268,6 +269,9 @@ function createCurseForgeDescriptor(parsedJar, version, changelog, clientId, ser
     displayName: `${version} · ${parsedJar.loader} · ${parsedJar.game}`,
     gameVersions: [clientId, serverId, loaderId, gameId],
     releaseType: "release",
+    ...(parsedJar.loader === "fabric"
+      ? { relations: { projects: [{ slug: "fabric-api", type: "requiredDependency" }] } }
+      : {}),
   };
 }
 

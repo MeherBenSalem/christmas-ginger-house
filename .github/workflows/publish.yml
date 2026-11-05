@@ -17,10 +17,11 @@ on:
         type: choice
         options:
           - "1.20.1"
+          - "1.21.1"
           - "26.1.2"
           - "26.2"
       version:
-        description: Mod version (default 1.1.0)
+        description: Mod version
         required: false
         default: "1.1.0"
       dry_run:
@@ -39,7 +40,17 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "25"
+          java-version: |
+            17
+            21
+            25
+
+      - name: Pick the JDK that runs this workspace's Gradle
+        run: |
+          case "${{ inputs.workspace || '26.2' }}" in
+            1.20.1|1.21.1) echo "JAVA_HOME=$JAVA_HOME_21_X64" >> "$GITHUB_ENV" ;;
+            *) echo "JAVA_HOME=$JAVA_HOME_25_X64" >> "$GITHUB_ENV" ;;
+          esac
 
       - uses: actions/setup-node@v4
         with:
