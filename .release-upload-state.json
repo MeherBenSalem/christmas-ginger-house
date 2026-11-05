@@ -211,6 +211,50 @@
       "remoteId": 9452846,
       "recordedAt": "2026-11-05T11:33:24.000Z",
       "via": "github-actions run 42019670212"
+    },
+    {
+      "platform": "modrinth",
+      "workspace": "26.2",
+      "version": "2.0.0",
+      "loader": "fabric",
+      "game": "26.2",
+      "fileName": "christmas_ginger_house-fabric-26.2-2.0.0.jar",
+      "remoteId": null,
+      "recordedAt": "2026-11-05T11:50:26.000Z",
+      "via": "github-actions run 42021936524"
+    },
+    {
+      "platform": "modrinth",
+      "workspace": "26.2",
+      "version": "2.0.0",
+      "loader": "neoforge",
+      "game": "26.2",
+      "fileName": "christmas_ginger_house-neoforge-26.2-2.0.0.jar",
+      "remoteId": null,
+      "recordedAt": "2026-11-05T11:50:26.000Z",
+      "via": "github-actions run 42021936524"
+    },
+    {
+      "platform": "curseforge",
+      "workspace": "26.2",
+      "version": "2.0.0",
+      "loader": "fabric",
+      "game": "26.2",
+      "fileName": "christmas_ginger_house-fabric-26.2-2.0.0.jar",
+      "remoteId": 9453005,
+      "recordedAt": "2026-11-05T11:50:26.000Z",
+      "via": "github-actions run 42021936524"
+    },
+    {
+      "platform": "curseforge",
+      "workspace": "26.2",
+      "version": "2.0.0",
+      "loader": "neoforge",
+      "game": "26.2",
+      "fileName": "christmas_ginger_house-neoforge-26.2-2.0.0.jar",
+      "remoteId": 9453006,
+      "recordedAt": "2026-11-05T11:50:26.000Z",
+      "via": "github-actions run 42021936524"
     }
   ]
 }
