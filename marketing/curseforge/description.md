@@ -1,5 +1,9 @@
 ![Christmas Ginger House 2.0: The Christmas Update](https://raw.githubusercontent.com/MeherBenSalem/christmas-ginger-house/main/marketing/images/banner.png)
 
+**[Discord](https://discord.gg/TJc3CxR4jK) · [The modpack](https://www.curseforge.com/minecraft/modpacks/remnants-ashen-legacy) · [Support NightBeam](https://nightbeam.dev/support) · [NightBeam Pro](https://nightbeam.dev/memberships) · [All projects](https://nightbeam.dev/projects)**
+
+> **Featured in [Remnants: Ashen Legacy](https://www.curseforge.com/minecraft/modpacks/remnants-ashen-legacy)**, NightBeam's story-driven soulslike RPG modpack.
+
 ## The all-in-one Christmas mod
 
 Gingerbread houses and decorated Christmas trees generate in the snow. Wrap presents for your friends, open one advent door a day, raise a herd of reindeer (one of them might have a glowing red nose), chase gingerbread men, bake and ice your own cookies, and deck your base with lights, wreaths, stockings and ornaments. Just keep an eye out for Krampus after dark.
@@ -127,7 +131,7 @@ Sneak and use a wrapped present to peek inside and change the gift. Presents fou
 
 ![Questions](https://raw.githubusercontent.com/MeherBenSalem/christmas-ginger-house/main/marketing/images/header-faq.png)
 
-**Does it only work in December?**
+**Is it just for December?**
 No. Everything is available all year.
 
 **Can I find the house and trees with commands?**
@@ -170,17 +174,18 @@ Yes. It is licensed under Apache-2.0.
 
 ![divider](https://raw.githubusercontent.com/MeherBenSalem/christmas-ginger-house/main/marketing/images/divider.png)
 
-## Follow NightBeam Studio
-
-[![YouTube](https://img.shields.io/badge/YouTube-NightBeam%20Studio-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@nightbeamstudio)
-[![Instagram](https://img.shields.io/badge/Instagram-%40nightbeamstudio-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/nightbeamstudio/)
-[![Website](https://img.shields.io/badge/Website-nightbeam.dev-f1c36b?style=for-the-badge&logo=googlechrome&logoColor=black)](https://nightbeam.dev/)
-[![X](https://img.shields.io/badge/X-%40NightBeamLLC-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/NightBeamLLC)
-[![Facebook](https://img.shields.io/badge/Facebook-NightBeam%20Studio-1877F2?style=for-the-badge&logo=facebook&logoColor=white)](https://www.facebook.com/profile.php?id=61574823331471)
-[![Discord](https://img.shields.io/badge/Discord-Join%20the%20server-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/TJc3CxR4jK)
-
-[![Source](https://img.shields.io/badge/Source-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/MeherBenSalem/christmas-ginger-house)
-
 ---
 
 Christmas Ginger House is licensed under Apache-2.0. The Cinzel and EB Garamond fonts used in this artwork are licensed under the SIL Open Font License 1.1. "Jingle Bells" (J. L. Pierpont, 1857) is in the public domain; the music-box arrangement and every other sound and texture were made for this mod.
+
+---
+
+### More from NightBeam Studio
+
+- **[Remnants: Ashen Legacy](https://www.curseforge.com/minecraft/modpacks/remnants-ashen-legacy)**: the story-driven soulslike RPG modpack built on NightBeam's mods
+- **[Premium server plugins](https://nightbeam.dev/store)**: anti-cheat, ranked PvP, SMP setups and more on BuiltByBit
+- **[NightBeam Pro](https://nightbeam.dev/memberships)**: the model library and NightBeam Forge credits, from $5 a month
+- **[Discord](https://discord.gg/TJc3CxR4jK)**: support, bug reports, suggestions and early looks
+- **[Support NightBeam](https://nightbeam.dev/support)**: help keep every mod free
+
+**Follow:** [YouTube](https://www.youtube.com/@nightbeamstudio) · [Instagram](https://www.instagram.com/nightbeamstudio/) · [X](https://x.com/NightBeamLLC) · [Facebook](https://www.facebook.com/profile.php?id=61574823331471) · [Source and issues](https://github.com/MeherBenSalem/christmas-ginger-house)
