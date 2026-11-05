@@ -1,7 +1,5 @@
 # Christmas Ginger House 2.0.0: The Christmas Update
 
-Minecraft 1.20.1, Fabric and Forge.
-
 The gingerbread house becomes an all-in-one Christmas mod.
 
 ## New
