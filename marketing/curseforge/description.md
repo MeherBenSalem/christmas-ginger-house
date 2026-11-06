@@ -1,6 +1,6 @@
 ![Christmas Ginger House 2.0: The Christmas Update](https://raw.githubusercontent.com/MeherBenSalem/christmas-ginger-house/main/marketing/images/banner.png)
 
-**[Discord](https://discord.gg/TJc3CxR4jK) · [Source and issues](https://github.com/MeherBenSalem/christmas-ginger-house)**
+**[Docs](https://nightbeam.dev/docs/christmas-ginger-house) · [Discord](https://discord.gg/TJc3CxR4jK) · [Source and issues](https://github.com/MeherBenSalem/christmas-ginger-house)**
 
 ## The all-in-one Christmas mod
 
