@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.0.1
+
+- Fixed a crash on Minecraft 26.1.2 and 26.2 (Fabric and NeoForge) when a Gingerbread Man or a
+  Reindeer loaded: "Ticking entity", `Can't find attribute minecraft:tempt_range`. On 26.x,
+  `TemptGoal` reads the `minecraft:tempt_range` attribute, and neither mob registered it. The
+  Reindeer now builds on `Animal.createAnimalAttributes()` and the Gingerbread Man adds the
+  attribute, both with the vanilla value of 10.
+- Added a Fabric server game test on 26.1.2 and 26.2 that spawns a Reindeer, a Gingerbread Man and
+  a Krampus next to a player holding their tempt food and runs their AI. `./gradlew build` runs it.
+- 1.20.1 and 1.21.1 do not have the attribute and were not affected; they stay on 2.0.0.
+
 ## 2.0.0 "The Christmas Update"
 
 - Every version (1.20.1 Fabric/Forge, 1.21.1, 26.1.2 and 26.2 Fabric/NeoForge) becomes an all-in-one Christmas mod: presents you can wrap and give,
