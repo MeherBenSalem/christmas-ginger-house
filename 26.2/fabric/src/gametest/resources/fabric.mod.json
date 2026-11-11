@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "christmas_ginger_house_gametest",
+  "version": "1.0.0",
+  "name": "Christmas Ginger House game tests",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": [
+      "tn.nightbeam.christmasgingerhouse.gametest.FestiveMobsGameTest"
+    ]
+  },
+  "depends": {
+    "christmas_ginger_house": "*",
+    "fabric-gametest-api-v1": "*"
+  }
+}

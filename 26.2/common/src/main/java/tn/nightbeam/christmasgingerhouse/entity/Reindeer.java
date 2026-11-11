@@ -58,7 +58,8 @@ public class Reindeer extends Animal {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Animal.createMobAttributes()
+        // createAnimalAttributes() adds TEMPT_RANGE, which TemptGoal reads on 26.x.
+        return Animal.createAnimalAttributes()
                 .add(Attributes.MAX_HEALTH, 16.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.22);
     }

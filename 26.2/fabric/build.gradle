@@ -29,6 +29,18 @@ loom {
     }
 }
 
+// Server game tests in src/gametest (a separate test mod, never part of the release jar).
+// Loom adds runGameTest to `check`, so `./gradlew build` runs them.
+fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = "${mod_id}_gametest".toString()
+        enableGameTests = true
+        enableClientGameTests = false
+        eula = true
+    }
+}
+
 // Implement mcgradleconventions loader attribute
 def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
 ['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements', 'includeInternal', 'modCompileClasspath'].each { variant ->

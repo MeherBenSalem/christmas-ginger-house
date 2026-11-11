@@ -38,7 +38,9 @@ public class GingerbreadMan extends PathfinderMob {
         return PathfinderMob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 8.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.3)
-                .add(Attributes.FOLLOW_RANGE, 16.0);
+                .add(Attributes.FOLLOW_RANGE, 16.0)
+                // TemptGoal reads TEMPT_RANGE on 26.x; 10 is the vanilla animal value (Animal.createAnimalAttributes()).
+                .add(Attributes.TEMPT_RANGE, 10.0);
     }
 
     @Override
