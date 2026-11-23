@@ -1,6 +1,5 @@
 package tn.nightbeam.christmasgingerhouse;
 
-import net.minecraft.world.level.block.ComposterBlock;
 import tn.nightbeam.christmasgingerhouse.platform.Services;
 import tn.nightbeam.christmasgingerhouse.registry.ModBlockEntities;
 import tn.nightbeam.christmasgingerhouse.registry.ModBlocks;
@@ -33,10 +32,6 @@ public final class ChristmasGingerHouse {
     }
 
     public static void commonSetup() {
-        ComposterBlock.COMPOSTABLES.put(ModItems.GINGER_ROOT.get(), 0.3F);
-        ComposterBlock.COMPOSTABLES.put(ModItems.GINGERBREAD_DOUGH.get(), 0.5F);
-        ComposterBlock.COMPOSTABLES.put(ModItems.GINGERBREAD.get(), 0.65F);
-        ComposterBlock.COMPOSTABLES.put(ModItems.GINGERBREAD_COOKIE.get(), 0.85F);
-        ComposterBlock.COMPOSTABLES.put(ModItems.WILD_GINGER.get(), 0.65F);
+        // 26.3: compost chances are the items' compostable component, set in ModItems.
     }
 }

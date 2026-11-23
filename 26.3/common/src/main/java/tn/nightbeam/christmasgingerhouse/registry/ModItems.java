@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DoubleHighBlockItem;
 import net.minecraft.world.item.Item;
@@ -38,13 +39,13 @@ public final class ModItems {
 
     // --- Food & ingredients
     public static final Supplier<Item> GINGER_ROOT = register("ginger_root",
-            () -> new BlockItem(ModBlocks.GINGER_CROP.get(), Keys.itemProps().useItemDescriptionPrefix()));
+            () -> new BlockItem(ModBlocks.GINGER_CROP.get(), Keys.itemProps().useItemDescriptionPrefix().compostable(ContextIntProviders.COMPOSTABLE_LOW)));
     public static final Supplier<Item> GINGERBREAD_DOUGH = register("gingerbread_dough",
-            () -> new Item(Keys.itemProps().food(food(2, 0.2F))));
+            () -> new Item(Keys.itemProps().food(food(2, 0.2F)).compostable(ContextIntProviders.COMPOSTABLE_LOW_MEDIUM)));
     public static final Supplier<Item> GINGERBREAD = register("gingerbread",
-            () -> new Item(Keys.itemProps().food(food(5, 0.6F))));
+            () -> new Item(Keys.itemProps().food(food(5, 0.6F)).compostable(ContextIntProviders.COMPOSTABLE_MEDIUM)));
     public static final Supplier<Item> GINGERBREAD_COOKIE = register("gingerbread_cookie",
-            () -> new TooltipItem(Keys.itemProps().food(food(6, 0.8F), Consumables.defaultFood().consumeSeconds(0.8F)
+            () -> new TooltipItem(Keys.itemProps().compostable(ContextIntProviders.COMPOSTABLE_MEDIUM_HIGH).food(food(6, 0.8F), Consumables.defaultFood().consumeSeconds(0.8F)
                     .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.ABSORPTION, 20 * 20, 0))).build())));
     public static final Supplier<Item> ICING = register("icing", () -> new Item(Keys.itemProps()));
     public static final Supplier<Item> CANDY_CANE = register("candy_cane",
@@ -97,7 +98,8 @@ public final class ModItems {
     public static final Supplier<Item> GREEN_PRESENT = present(ModBlocks.GREEN_PRESENT);
     public static final Supplier<Item> BLUE_PRESENT = present(ModBlocks.BLUE_PRESENT);
     public static final Supplier<Item> GOLD_PRESENT = present(ModBlocks.GOLD_PRESENT);
-    public static final Supplier<Item> WILD_GINGER = block(ModBlocks.WILD_GINGER);
+    public static final Supplier<Item> WILD_GINGER = register(ModBlocks.nameOf(ModBlocks.WILD_GINGER),
+            () -> new BlockItem(ModBlocks.WILD_GINGER.get(), Keys.itemProps().useBlockDescriptionPrefix().compostable(ContextIntProviders.COMPOSTABLE_MEDIUM)));
 
     // --- Spawn eggs
     public static final Supplier<Item> GINGERBREAD_MAN_SPAWN_EGG = register("gingerbread_man_spawn_egg",
