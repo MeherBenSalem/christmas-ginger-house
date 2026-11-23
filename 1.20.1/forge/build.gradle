@@ -26,6 +26,7 @@ legacyForge {
         }
         server {
             server()
+            gameDirectory = project.file('runs/server')
         }
     }
 
