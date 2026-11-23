@@ -8,6 +8,8 @@
 #   summons every entity (gingerbread man, reindeer, Krampus), checks each one is still there after a few ticks and
 #   lets them run their AI for 600 ticks,
 #   sets every block (presents, advent calendar, lights, ornaments, gingerbread blocks, ginger crop...) on farmland,
+#   smelts raw iron in a furnace fuelled with naughty coal and fills a composter from a hopper of gingerbread
+#   cookies (the fuel and compost values each loader registers),
 #   summons every item as an item entity and checks each one is still there a few ticks later
 #   (an unknown or broken item is dropped as air),
 #   then runs /save-all and a guarded /reload and stops.
@@ -142,7 +144,7 @@ for dir in function functions; do
     i=0
     for s in $STRUCTURES; do
       set -- ${STRUCTURE_SPOTS[$i]}; i=$((i + 1))
-      check "place_structure_$s" place structure "$MOD:$s" "$1" "$2"
+      check "place_structure_$s" place structure "$MOD:$s" "$1" 0 "$2"
     done
     x=-90
     for t in $TEMPLATES; do
@@ -160,6 +162,13 @@ for dir in function functions; do
       check "summon_$e" summon "$MOD:$e" "$((-64 + dx))" 100 64 "{Tags:[\"cgh_smoke\",\"cgh_e_$e\"],PersistenceRequired:1b}"
       dx=$((dx + 4))
     done
+    # Naughty coal as furnace fuel; gingerbread cookies into a composter through a hopper.
+    echo 'setblock -68 100 59 minecraft:furnace'
+    check feed_furnace item replace block -68 100 59 container.0 with minecraft:raw_iron 1
+    check fuel_furnace item replace block -68 100 59 container.1 with $MOD:naughty_coal 1
+    echo 'setblock -62 100 59 minecraft:composter'
+    echo 'setblock -62 101 59 minecraft:hopper[facing=down]'
+    check feed_composter item replace block -62 101 59 container.0 with $MOD:gingerbread_cookie 32
     # Every block on the farmland field, two blocks apart.
     j=0
     for b in $BLOCKS; do
@@ -188,6 +197,8 @@ for dir in function functions; do
   } > "$FN/$dir/alive.mcfunction"
 
   {
+    check naughty_coal_burns execute if data block -68 100 59 'Items[{id:"minecraft:iron_ingot"}]'
+    check cookies_compost execute unless block -62 100 59 'minecraft:composter[level=0]'
     check save save-all flush
     echo 'reload'
     echo "schedule function $NS:end 100t"
@@ -210,6 +221,8 @@ for _ in $(seq 1 240); do
   sleep 5
   if grep -q "CGH_SMOKE_OK" "$LOG"; then result=ok; break; fi
   if grep -q -E "$CRASH" "$LOG"; then result=crash; break; fi
+  # A smoke function that does not parse never runs: no need to wait for the timeout.
+  if grep -q "Failed to load function" "$LOG"; then result=bad_function; break; fi
   if ! kill -0 $PID 2>/dev/null; then result=exited; break; fi
 done
 sleep 10
@@ -231,9 +244,11 @@ if grep -n "CGH_FAILED" "$LOG"; then echo "::error::a command failed"; fail=1; f
 oks=$(grep -c "CGH_OK " "$LOG")
 echo "Commands OK: $oks of $EXPECTED_OK"
 [ "$oks" -ge "$EXPECTED_OK" ] || { echo "::error::not every command check passed"; fail=1; }
+# (The checkout path is left out: it holds the repository name. NeoForge's deprecation note on the mods.toml
+# logoFile key is metadata, not a load error.)
 # Errors, warnings and exceptions that mention the mod (its id, its name, its package or the smoke pack).
-if grep -n -E "(ERROR|WARN|Exception|Caused by|Failed|Couldn't|Unknown|Errors in)" "$LOG" \
-    | grep -v -E "JAVA_TOOL_OPTIONS|Reference map '[a-z_.]*refmap.json' .* could not be read" \
+if grep -n -E "(ERROR|WARN|Exception|Caused by|Failed|Couldn't|Unknown|Errors in)" "$LOG" | sed "s|$ROOT|<checkout>|g" \
+    | grep -v -E "JAVA_TOOL_OPTIONS|deprecated \`logoFile\`|Reference map '[a-z_.]*refmap.json' .* could not be read" \
     | grep -i -E "$MOD|Christmas Ginger House|tn\.nightbeam\.christmasgingerhouse|$NS"; then
   echo "::error::error or warning mentioning the mod"; fail=1
 fi
