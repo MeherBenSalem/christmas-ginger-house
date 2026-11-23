@@ -156,6 +156,9 @@ for dir in function functions; do
       check "place_feature_$f" place feature "$MOD:$f" "$x" 100 -64
       x=$((x + 16))
     done
+    # Diagnostic only: whether this version counts grass as #minecraft:dirt (plants that check that tag).
+    echo "execute if block 16 99 -64 #minecraft:dirt run say CGH_INFO grass is in #minecraft:dirt"
+    echo "execute unless block 16 99 -64 #minecraft:dirt run say CGH_INFO grass is not in #minecraft:dirt"
     # Every entity on its pad, kept from despawning.
     dx=-4
     for e in $ENTITIES; do
@@ -245,10 +248,11 @@ oks=$(grep -c "CGH_OK " "$LOG")
 echo "Commands OK: $oks of $EXPECTED_OK"
 [ "$oks" -ge "$EXPECTED_OK" ] || { echo "::error::not every command check passed"; fail=1; }
 # (The checkout path is left out: it holds the repository name. NeoForge's deprecation note on the mods.toml
-# logoFile key is metadata, not a load error.)
+# logoFile key is metadata, not a load error. Vanilla logs "No data fixer registered for" at ERROR for every
+# modded entity type on Fabric 1.20.1/1.21.1; that only means no old-save upgrade exists for it.)
 # Errors, warnings and exceptions that mention the mod (its id, its name, its package or the smoke pack).
 if grep -n -E "(ERROR|WARN|Exception|Caused by|Failed|Couldn't|Unknown|Errors in)" "$LOG" | sed "s|$ROOT|<checkout>|g" \
-    | grep -v -E "JAVA_TOOL_OPTIONS|deprecated \`logoFile\`|Reference map '[a-z_.]*refmap.json' .* could not be read" \
+    | grep -v -E "JAVA_TOOL_OPTIONS|deprecated \`logoFile\`|Reference map '[a-z_.]*refmap.json' .* could not be read|No data fixer registered for $MOD:[a-z0-9_]+$" \
     | grep -i -E "$MOD|Christmas Ginger House|tn\.nightbeam\.christmasgingerhouse|$NS"; then
   echo "::error::error or warning mentioning the mod"; fail=1
 fi
