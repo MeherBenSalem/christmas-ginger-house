@@ -688,15 +688,17 @@ def generate(common_res, loader_res, target='1.20.1'):
         tag(d, 'items/candy_cane_repairs', ['candy_cane'])
         tag(d, 'items/festive_armor_repairs', ['#minecraft:wool'])
     if modern:
-        # 1.21 jukebox songs are data, and NeoForge reads fuel and compost values from data maps.
+        # 1.21 jukebox songs are data, and NeoForge up to 26.2 reads fuel and compost values from data maps
+        # (26.3 has neither data map: they are the items' cooking_fuel and compostable components, set in Java).
         d.json('jukebox_song/jingle_bells.json', {'sound_event': ns('music_disc.jingle_bells'),
                                                   'description': {'translate': f'jukebox_song.{MOD}.jingle_bells'},
                                                   'length_in_seconds': 64.0, 'comparator_output': 12})
-        nf = Writer(os.path.join(loader_res, 'data', 'neoforge'))
-        nf.json('data_maps/item/furnace_fuels.json', {'values': {ns('naughty_coal'): {'burn_time': 3200}}})
-        nf.json('data_maps/item/compostables.json', {'values': {
-            ns('ginger_root'): {'chance': 0.3}, ns('gingerbread_dough'): {'chance': 0.5}, ns('gingerbread'): {'chance': 0.65},
-            ns('gingerbread_cookie'): {'chance': 0.85}, ns('wild_ginger'): {'chance': 0.65}}})
+        if not targets.TARGETS[target].get('v263'):
+            nf = Writer(os.path.join(loader_res, 'data', 'neoforge'))
+            nf.json('data_maps/item/furnace_fuels.json', {'values': {ns('naughty_coal'): {'burn_time': 3200}}})
+            nf.json('data_maps/item/compostables.json', {'values': {
+                ns('ginger_root'): {'chance': 0.3}, ns('gingerbread_dough'): {'chance': 0.5}, ns('gingerbread'): {'chance': 0.65},
+                ns('gingerbread_cookie'): {'chance': 0.85}, ns('wild_ginger'): {'chance': 0.65}}})
         lang = dict(LANG)
         lang[f'jukebox_song.{MOD}.jingle_bells'] = 'J. Pierpont - Jingle Bells (Music Box)'
         a.json('lang/en_us.json', dict(sorted(lang.items())))

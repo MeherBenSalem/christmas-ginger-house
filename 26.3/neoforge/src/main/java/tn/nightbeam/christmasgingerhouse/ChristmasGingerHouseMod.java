@@ -18,7 +18,7 @@ import tn.nightbeam.christmasgingerhouse.entity.Reindeer;
 import tn.nightbeam.christmasgingerhouse.platform.NeoForgePlatformHelper;
 import tn.nightbeam.christmasgingerhouse.registry.ModEntities;
 
-/** Compost values come from data maps in data/neoforge/data_maps; naughty coal's burn time is its cooking_fuel component (FuelItem), with the furnace_fuels data map kept as a fallback. */
+/** Compost values are the items' compostable component and naughty coal's burn time is its cooking_fuel component (FuelItem); NeoForge 26.3 has neither data map. */
 @Mod(Constants.MOD_ID)
 public class ChristmasGingerHouseMod {
 
