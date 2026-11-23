@@ -21,7 +21,10 @@ public class WildGingerBlock extends VegetationBlock {
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        return state.is(BlockTags.DIRT) || state.is(net.minecraft.world.level.block.Blocks.FARMLAND);
+        // On 26.x the #minecraft:dirt check alone refused grass, so wild ginger never generated; the vanilla check
+        // (super) knows the soils plants grow on, so keep it and still allow dirt and farmland.
+        return super.mayPlaceOn(state, level, pos)
+                || state.is(BlockTags.DIRT) || state.is(net.minecraft.world.level.block.Blocks.FARMLAND);
     }
 
     @Override
