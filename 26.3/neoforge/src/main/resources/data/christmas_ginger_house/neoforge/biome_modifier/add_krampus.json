@@ -1,0 +1,11 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#christmas_ginger_house:spawns_krampus",
+  "spawners": [
+    {
+      "type": "christmas_ginger_house:krampus",
+      "count": 1,
+      "weight": 4
+    }
+  ]
+}

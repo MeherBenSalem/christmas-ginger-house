@@ -1,0 +1,45 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "christmas_ginger_house:blocks/ginger_crop",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "christmas_ginger_house:ginger_root"
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "christmas_ginger_house:ginger_crop",
+        "state": {
+          "age": "3"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "christmas_ginger_house:ginger_root",
+          "modifier": {
+            "type": "minecraft:apply_bonus",
+            "enchantment": "minecraft:fortune",
+            "formula": "minecraft:binomial_with_bonus_count",
+            "parameters": {
+              "extra": 3,
+              "probability": 0.5714286
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "modifier": {
+    "type": "minecraft:explosion_decay"
+  }
+}

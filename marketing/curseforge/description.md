@@ -6,7 +6,7 @@
 
 Gingerbread houses and decorated Christmas trees generate in the snow. Wrap presents for your friends, open one advent door a day, raise a herd of reindeer (one of them might have a glowing red nose), chase gingerbread men, bake and ice your own cookies, and deck your base with lights, wreaths, stockings and ornaments. Just keep an eye out for Krampus after dark.
 
-**2.0 "The Christmas Update"** turns the original gingerbread house into a complete holiday mod: 40 items, 3 creatures, 2 structures, original textures, models and sounds, for **Minecraft 1.20.1, 1.21.1, 26.1.2 and 26.2** on Fabric, Forge and NeoForge.
+**2.0 "The Christmas Update"** turns the original gingerbread house into a complete holiday mod: 40 items, 3 creatures, 2 structures, original textures, models and sounds, for **Minecraft 1.20.1, 1.21.1, 26.2 and 26.3** on Fabric, Forge and NeoForge.
 
 ![divider](https://raw.githubusercontent.com/MeherBenSalem/christmas-ginger-house/main/marketing/images/divider.png)
 
@@ -121,8 +121,8 @@ Sneak and use a wrapped present to peek inside and change the gift. Presents fou
 | --- | --- | --- |
 | 1.20.1 | Fabric (with Fabric API), Forge 47+ | 17 |
 | 1.21.1 | Fabric (with Fabric API), NeoForge | 21 |
-| 26.1.2 | Fabric (with Fabric API), NeoForge | 25 |
 | 26.2 | Fabric (with Fabric API), NeoForge | 25 |
+| 26.3 | Fabric (with Fabric API), NeoForge | 25 |
 
 - Every version has the same content.
 - Install on both the server and the clients.

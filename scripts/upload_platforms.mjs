@@ -1,10 +1,21 @@
 /**
- * Upload workspace jars to Modrinth + CurseForge from local builds.
- * Tokens: env vars or NightBeam-Knowledge-Base/secrets/local.env
+ * Upload Christmas Ginger House jars from releases/ (or --jar-dir) to Modrinth and CurseForge.
  *
- * Usage:
- *   node scripts/upload_platforms.mjs --workspace 26.1.2 --version 1.1.0
- *   node scripts/upload_platforms.mjs --workspace 26.1.2 --version 1.1.0 --dry-run
+ *   node scripts/upload_platforms.mjs --version 2.0.2 [--modrinth-only | --curseforge-only]
+ *                                     [--dry-run] [--sync-project] [--changelog-file FILE]
+ *                                     [--games 26.3,26.2] [--jar-dir DIR]
+ *
+ * Jars are named christmas_ginger_house-<loader>-<minecraft>-<version>.jar; each one is published for exactly
+ * that loader and Minecraft version (see SUPPORTED below: the 8 NightBeam convention targets). Files already on
+ * Modrinth or CurseForge (or recorded in .release-upload-state.json) are skipped, so a rerun is safe.
+ * A dry run without tokens only prints what would be uploaded and makes no network call.
+ *
+ * Release notes: --changelog-file, else patchnotes/Christmas-Ginger-House-<version>-PatchNotes.md, else the
+ * "## <version>" section of CHANGELOG.md.
+ *
+ * Environment: MODRINTH_TOKEN; CURSEFORGE_TOKEN and CURSEFORGE_API_KEY (only for the selected platforms).
+ * Optional: MODRINTH_ID, CURSEFORGE_ID (the repo variables) to override the project ids below.
+ * Locally, secrets can also live in secrets/local.env (KEY=value lines, never committed).
  */
 import fs from "fs";
 import path from "path";
@@ -13,32 +24,40 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, "..");
 
-const MODRINTH_ID = "Ddgd2w2n";
-const CURSEFORGE_ID = "1409805";
+const MODRINTH_ID = process.env.MODRINTH_ID || "Ddgd2w2n";
+const CURSEFORGE_ID = process.env.CURSEFORGE_ID || "1409805";
 const MOD_TITLE = "Christmas Ginger House";
 const JAR_PREFIX = "christmas_ginger_house-";
-const DEFAULT_WORKSPACE = "26.1.2";
 const CURSEFORGE_GAME_ID = 432;
+const DEFAULT_JAR_DIR = path.join(ROOT, "releases");
+// The Modrinth listing: marketing/modrinth/ is made from the CurseForge copy by tools/make_modrinth_md.py.
+const ICON_PATH = path.join(ROOT, "marketing", "images", "icon.png");
+const DESCRIPTION_PATH = path.join(ROOT, "marketing", "modrinth", "description.md");
+const SUMMARY_PATH = path.join(ROOT, "marketing", "modrinth", "summary.txt");
 const RELEASE_STATE_PATH = path.join(ROOT, ".release-upload-state.json");
 
-async function loadEnv() {
+const MODRINTH_FABRIC_API = "P7dR8mSH";
+const CURSEFORGE_LOADER_IDS = { fabric: 7499, forge: 7498, neoforge: 10150 };
+
+/** Minecraft version of each version root and the loaders it builds (NightBeam convention: 8 jars). */
+const SUPPORTED = {
+  "26.3": ["fabric", "neoforge"],
+  "26.2": ["fabric", "neoforge"],
+  "1.21.1": ["fabric", "neoforge"],
+  "1.20.1": ["fabric", "forge"],
+};
+
+function loadLocalEnv() {
   const home = process.env.HOME || process.env.USERPROFILE || "";
   const candidates = [
     path.join(ROOT, "secrets", "local.env"),
     path.join(home, "NightBeam-Knowledge-Base", "secrets", "local.env"),
-    path.join(process.env.USERPROFILE || "", "NightBeam-Knowledge-Base", "secrets", "local.env"),
-    "C:\\Users\\mahou\\NightBeam-Knowledge-Base\\secrets\\local.env",
-    "/home/ubuntu/NightBeam-Knowledge-Base/secrets/local.env",
   ];
   for (const envPath of candidates) {
     if (!fs.existsSync(envPath)) continue;
-    const text = fs.readFileSync(envPath, "utf8");
-    for (const line of text.split(/\r?\n/)) {
+    for (const line of fs.readFileSync(envPath, "utf8").split(/\r?\n/)) {
       const m = line.match(/^([^#=]+)=(.*)$/);
-      if (!m) continue;
-      const k = m[1].trim();
-      const v = m[2].trim();
-      if (!process.env[k]) process.env[k] = v;
+      if (m && !process.env[m[1].trim()]) process.env[m[1].trim()] = m[2].trim();
     }
     console.log("Loaded secrets from", envPath);
     return;
@@ -46,162 +65,219 @@ async function loadEnv() {
 }
 
 function parseArgs(argv) {
-  const out = {
-    curseforgeOnly: false,
-    modrinthOnly: false,
-    dryRun: false,
-    workspace: DEFAULT_WORKSPACE,
-  };
+  const out = { curseforgeOnly: false, modrinthOnly: false, dryRun: false, syncProject: false, jarDir: DEFAULT_JAR_DIR };
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--version") out.version = argv[++i];
-    else if (a === "--workspace") out.workspace = argv[++i];
     else if (a === "--changelog-file") out.changelogFile = argv[++i];
     else if (a === "--curseforge-only") out.curseforgeOnly = true;
     else if (a === "--modrinth-only") out.modrinthOnly = true;
     else if (a === "--dry-run") out.dryRun = true;
+    else if (a === "--sync-project") out.syncProject = true;
+    else if (a === "--jar-dir") out.jarDir = path.resolve(argv[++i] || "");
+    else if (a === "--games") out.games = (argv[++i] || "").split(/[\s,]+/).filter(Boolean);
     else throw new Error(`Unknown arg ${a}`);
   }
   if (!out.version) throw new Error("--version required");
+  out.version = out.version.replace(/^v/, "");
+  if (out.games && !out.games.length) throw new Error("--games needs at least one Minecraft version");
+  for (const game of out.games || []) {
+    if (!SUPPORTED[game]) throw new Error(`--games: ${game} is not a version root of this repository`);
+  }
   return out;
 }
 
 function parseJar(jar) {
-  const n = path.basename(jar);
-  let loader = "fabric";
-  if (/neoforge/i.test(n)) loader = "neoforge";
-  else if (/forge/i.test(n)) loader = "forge";
-  else if (/fabric/i.test(n)) loader = "fabric";
-  const m = n.match(
-    /^christmas_ginger_house-(?:fabric|forge|neoforge)-(.+)-(\d+\.\d+\.\d+(?:-[A-Za-z0-9.]+)?)\.jar$/i,
-  );
-  const game = m ? m[1] : null;
-  return { jar, name: n, loader, game };
-}
-
-function resolveWorkspaceDir(workspace) {
-  const workspaceDir = path.resolve(ROOT, workspace);
-  if (!fs.existsSync(workspaceDir)) {
-    throw new Error(`Workspace does not exist: ${workspace}`);
+  const name = path.basename(jar);
+  const m = name.match(/^christmas_ginger_house-(fabric|forge|neoforge)-(.+)-(\d+\.\d+\.\d+)\.jar$/i);
+  if (!m) throw new Error(`Cannot parse jar name: ${name}`);
+  const loader = m[1].toLowerCase();
+  const game = m[2];
+  if (!SUPPORTED[game]?.includes(loader)) {
+    throw new Error(`${name}: ${loader} on Minecraft ${game} is not a version root of this repository`);
   }
-  return workspaceDir;
+  return { jar, name, loader, game, version: m[3] };
 }
 
-function collectWorkspaceJars(workspaceDir, version) {
-  // Loader jars are produced under per-loader build dirs (fabric/forge/neoforge).
-  // This is intentionally broad so older workspaces (e.g. 1.20.1) that include Forge
-  // still publish all variants.
-  const loaderDirs = ["fabric", "forge", "neoforge"];
-  const jars = [];
-  for (const loaderDir of loaderDirs) {
-    const libsDir = path.join(workspaceDir, loaderDir, "build", "libs");
-    if (!fs.existsSync(libsDir)) continue;
-    for (const name of fs.readdirSync(libsDir)) {
-      if (!name.startsWith(JAR_PREFIX)) continue;
-      if (!name.endsWith(`-${version}.jar`)) continue;
-      if (
-        name.includes("-common-") ||
-        name.includes("-sources") ||
-        name.includes("-javadoc") ||
-        name.includes("-dev") ||
-        name.includes("-shadow")
-      ) {
-        continue;
-      }
-      jars.push(path.join(libsDir, name));
-    }
-  }
-  const deduped = [...new Set(jars)].sort();
-  return deduped;
+function collectJars(version, jarDir) {
+  if (!fs.existsSync(jarDir)) throw new Error(`Missing ${jarDir}; build first (./gradlew buildAll)`);
+  return fs
+    .readdirSync(jarDir)
+    .filter((n) => n.startsWith(JAR_PREFIX) && n.endsWith(`-${version}.jar`))
+    .map((n) => path.join(jarDir, n))
+    .sort();
 }
 
+/** This version's patch notes, else its "## x.y.z" section of CHANGELOG.md. */
 function readChangelog(version, changelogFile) {
-  const changelogCandidates = [
-    changelogFile,
-    path.join(ROOT, `Christmas-Ginger-House-${version}-PatchNotes.md`),
-    path.join(ROOT, "PATCH_NOTES.md"),
-    path.join(ROOT, "CHANGELOG.md"),
-  ].filter(Boolean);
-  for (const f of changelogCandidates) {
-    if (fs.existsSync(f)) {
-      console.log("Changelog:", f);
-      return fs.readFileSync(f, "utf8");
+  if (changelogFile) return fs.readFileSync(changelogFile, "utf8");
+  const notes = path.join(ROOT, "patchnotes", `Christmas-Ginger-House-${version}-PatchNotes.md`);
+  if (fs.existsSync(notes)) {
+    console.log("Changelog:", path.relative(ROOT, notes));
+    return fs.readFileSync(notes, "utf8");
+  }
+  const file = path.join(ROOT, "CHANGELOG.md");
+  if (fs.existsSync(file)) {
+    const lines = fs.readFileSync(file, "utf8").replace(/^﻿/, "").split(/\r?\n/);
+    const heading = new RegExp(`^##\\s+v?${version.replace(/\./g, "\\.")}(\\s|$)`);
+    const start = lines.findIndex((l) => heading.test(l));
+    if (start >= 0) {
+      let end = lines.findIndex((l, i) => i > start && /^##?\s/.test(l));
+      if (end < 0) end = lines.length;
+      const section = lines.slice(start + 1, end).join("\n").trim();
+      if (section) {
+        console.log("Changelog: CHANGELOG.md section", lines[start].trim());
+        return section;
+      }
     }
   }
-  return `## ${MOD_TITLE} ${version}\n\nLocal release upload.`;
+  return `## ${MOD_TITLE} ${version}`;
 }
 
 function loadReleaseState() {
-  if (!fs.existsSync(RELEASE_STATE_PATH)) {
-    return { uploads: [] };
-  }
   try {
     const parsed = JSON.parse(fs.readFileSync(RELEASE_STATE_PATH, "utf8"));
     if (Array.isArray(parsed.uploads)) return parsed;
-  } catch (error) {
-    console.warn("Ignoring unreadable release state:", error.message);
-  }
+  } catch {}
   return { uploads: [] };
 }
 
-function saveReleaseState(state) {
+function hasRecordedUpload(state, platform, version, jar) {
+  return state.uploads.some((e) => e.platform === platform && e.version === version && e.fileName === jar.name);
+}
+
+function recordUpload(state, platform, version, jar, remoteId) {
+  if (hasRecordedUpload(state, platform, version, jar)) return;
+  state.uploads.push({ platform, version, loader: jar.loader, game: jar.game, fileName: jar.name, remoteId, recordedAt: new Date().toISOString() });
   fs.writeFileSync(RELEASE_STATE_PATH, `${JSON.stringify(state, null, 2)}\n`, "utf8");
 }
 
-function hasRecordedUpload(state, platform, workspace, version, parsedJar) {
-  return state.uploads.some(
-    (entry) =>
-      entry.platform === platform &&
-      entry.workspace === workspace &&
-      entry.version === version &&
-      entry.fileName === parsedJar.name,
-  );
-}
-
-function recordUpload(state, platform, workspace, version, parsedJar, remoteId) {
-  if (hasRecordedUpload(state, platform, workspace, version, parsedJar)) return;
-  state.uploads.push({
-    platform,
-    workspace,
-    version,
-    loader: parsedJar.loader,
-    game: parsedJar.game,
-    fileName: parsedJar.name,
-    remoteId,
-    recordedAt: new Date().toISOString(),
-  });
-  saveReleaseState(state);
-}
+const versionLabel = (version, jar) => `${version} · ${jar.loader} · ${jar.game}`;
 
 async function fetchJson(url, options = {}, allow404 = false) {
   const res = await fetch(url, options);
   if (allow404 && res.status === 404) return null;
   const text = await res.text();
-  if (!res.ok) {
-    throw new Error(`${url} -> ${res.status} ${text.slice(0, 500)}`);
-  }
+  if (!res.ok) throw new Error(`${url} -> ${res.status} ${text.slice(0, 500)}`);
   return text ? JSON.parse(text) : null;
 }
 
-async function fetchExistingModrinth() {
-  const payload = await fetchJson(`https://api.modrinth.com/v2/project/${MODRINTH_ID}/version`);
-  const versions = Array.isArray(payload) ? payload : [];
+// ------------------------------------------------------------------ Modrinth
+
+async function modrinth(pathname, token, init = {}) {
+  const res = await fetch(`https://api.modrinth.com/v2${pathname}`, {
+    ...init,
+    headers: { ...(token ? { Authorization: token } : {}), "User-Agent": "christmas-ginger-house publish", ...(init.headers || {}) },
+  });
+  const text = await res.text();
+  if (!res.ok) throw new Error(`Modrinth ${init.method || "GET"} ${pathname}: ${res.status} ${text.slice(0, 500)}`);
+  return text ? JSON.parse(text) : null;
+}
+
+async function syncModrinthProject(token, dryRun) {
+  const body = fs.existsSync(DESCRIPTION_PATH) ? fs.readFileSync(DESCRIPTION_PATH, "utf8") : null;
+  if (dryRun) {
+    console.log("[dry-run] Modrinth project: summary, description and icon");
+    return;
+  }
+  const summary = fs.existsSync(SUMMARY_PATH) ? fs.readFileSync(SUMMARY_PATH, "utf8").trim() : "";
+  const patch = { description: summary || "The all-in-one Christmas mod." };
+  if (body) patch.body = body;
+  await modrinth(`/project/${MODRINTH_ID}`, token, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(patch),
+  });
+  if (fs.existsSync(ICON_PATH)) {
+    await modrinth(`/project/${MODRINTH_ID}/icon?ext=png`, token, {
+      method: "PATCH",
+      headers: { "Content-Type": "image/png" },
+      body: fs.readFileSync(ICON_PATH),
+    });
+  }
+  console.log("Modrinth project page updated");
+}
+
+function createModrinthDescriptor(jar, version, changelog) {
+  return {
+    name: versionLabel(version, jar),
+    version_number: `${version}+${jar.loader}-${jar.game}`,
+    changelog,
+    // Fabric builds need Fabric API.
+    dependencies: jar.loader === "fabric" ? [{ project_id: MODRINTH_FABRIC_API, dependency_type: "required" }] : [],
+    game_versions: [jar.game],
+    version_type: "release",
+    loaders: [jar.loader],
+    featured: false,
+    status: "listed",
+    project_id: MODRINTH_ID,
+    file_parts: ["file_0"],
+    primary_file: "file_0",
+  };
+}
+
+async function uploadToModrinth(jars, version, changelog, token, dryRun, state) {
+  if (dryRun && !token) {
+    for (const jar of jars) console.log("[dry-run] Modrinth", `${version}+${jar.loader}-${jar.game}`, jar.name);
+    return;
+  }
   const versionNumbers = new Set();
   const fileNames = new Set();
-  for (const version of versions) {
-    if (version.version_number) versionNumbers.add(version.version_number);
-    for (const file of version.files || []) {
-      if (file.filename) fileNames.add(file.filename);
+  try {
+    for (const v of (await modrinth(`/project/${MODRINTH_ID}/version`, token)) || []) {
+      if (v.version_number) versionNumbers.add(v.version_number);
+      for (const file of v.files || []) if (file.filename) fileNames.add(file.filename);
     }
+  } catch (e) {
+    if (!dryRun) throw e;
+    console.log("[dry-run] could not list Modrinth versions:", e.message);
   }
-  return { versionNumbers, fileNames };
+  let uploaded = 0;
+  let skipped = 0;
+  for (const jar of jars) {
+    const data = createModrinthDescriptor(jar, version, changelog);
+    if (hasRecordedUpload(state, "modrinth", version, jar) || versionNumbers.has(data.version_number) || fileNames.has(jar.name)) {
+      console.log("Modrinth skip (already published)", data.version_number, jar.name);
+      skipped += 1;
+      continue;
+    }
+    if (dryRun) {
+      console.log("[dry-run] Modrinth", data.version_number, jar.name);
+      uploaded += 1;
+      continue;
+    }
+    const form = new FormData();
+    form.append("data", JSON.stringify(data));
+    form.append("file_0", new Blob([fs.readFileSync(jar.jar)]), jar.name);
+    const created = await modrinth("/version", token, { method: "POST", body: form });
+    recordUpload(state, "modrinth", version, jar, created?.id ?? null);
+    console.log("Modrinth OK", data.version_number, jar.name);
+    uploaded += 1;
+  }
+  console.log("Modrinth result:", uploaded, "upload(s),", skipped, "skip(s)");
+}
+
+// ------------------------------------------------------------------ CurseForge
+
+async function resolveCurseForgeCreds(token, apiKey) {
+  // NightBeam local.env sometimes swaps CURSEFORGE_TOKEN / CURSEFORGE_API_KEY names.
+  // Core API wants x-api-key; the legacy upload API wants X-Api-Token.
+  for (const [coreKey, uploadToken] of [
+    [apiKey, token],
+    [token, apiKey],
+  ]) {
+    const res = await fetch(`https://api.curseforge.com/v1/mods/${CURSEFORGE_ID}`, {
+      headers: { "x-api-key": coreKey, Accept: "application/json" },
+    });
+    if (res.ok) return { coreKey, uploadToken };
+  }
+  throw new Error("Neither CURSEFORGE_TOKEN nor CURSEFORGE_API_KEY works as CurseForge Core API key");
 }
 
 async function fetchExistingCurseForge(apiKey) {
-  const payload = await fetchJson(
-    `https://api.curseforge.com/v1/mods/${CURSEFORGE_ID}/files?pageSize=200&index=0`,
-    { headers: { "x-api-key": apiKey, Accept: "application/json" } },
-  );
+  const payload = await fetchJson(`https://api.curseforge.com/v1/mods/${CURSEFORGE_ID}/files?pageSize=200&index=0`, {
+    headers: { "x-api-key": apiKey, Accept: "application/json" },
+  });
   const fileNames = new Set();
   const displayNames = new Set();
   for (const file of payload?.data || []) {
@@ -216,62 +292,23 @@ async function fetchCurseForgeVersionContext(token, apiKey) {
     headers: { "X-Api-Token": token },
   });
   const legacyFlat = Array.isArray(legacyPayload) ? legacyPayload : legacyPayload?.data || [];
-  const findLegacy = (want, preferType) => {
-    const hits = legacyFlat.filter((v) => v.name === want);
-    if (preferType != null) {
-      const hit = hits.find((v) => v.gameVersionTypeID === preferType);
-      if (!hit) throw new Error(`No CurseForge legacy version for ${want} (type ${preferType})`);
-      return hit.id;
-    }
-    if (!hits[0]) throw new Error(`No CurseForge legacy version for ${want}`);
-    return hits[0].id;
+  const findLegacy = (want) => {
+    const hit = legacyFlat.find((v) => v.name === want);
+    if (!hit) throw new Error(`No CurseForge legacy version for ${want}`);
+    return hit.id;
   };
-  const versionTypesPayload = await fetchJson(
-    `https://api.curseforge.com/v1/games/${CURSEFORGE_GAME_ID}/version-types`,
-    { headers: { "x-api-key": apiKey, Accept: "application/json" } },
-  );
+  const versionTypesPayload = await fetchJson(`https://api.curseforge.com/v1/games/${CURSEFORGE_GAME_ID}/version-types`, {
+    headers: { "x-api-key": apiKey, Accept: "application/json" },
+  });
   const minecraftTypeIds = [];
   for (const type of versionTypesPayload?.data || []) {
-    if (/minecraft/i.test(type.name) && !/bukkit|spigot|paper|plugin/i.test(type.name)) {
-      minecraftTypeIds.push(type.id);
-    }
+    if (/minecraft/i.test(type.name) && !/bukkit|spigot|paper|plugin/i.test(type.name)) minecraftTypeIds.push(type.id);
   }
   return {
     legacyFlat,
     clientId: findLegacy("Client"),
     serverId: findLegacy("Server"),
     minecraftTypeIds: [...minecraftTypeIds, 77784, 1],
-  };
-}
-
-function createModrinthDescriptor(parsedJar, version, changelog) {
-  return {
-    name: `${version} · ${parsedJar.loader} · ${parsedJar.game}`,
-    version_number: `${version}+${parsedJar.loader}-${parsedJar.game}`,
-    changelog,
-    // Fabric builds need Fabric API (Modrinth project P7dR8mSH).
-    dependencies: parsedJar.loader === "fabric" ? [{ project_id: "P7dR8mSH", dependency_type: "required" }] : [],
-    game_versions: [parsedJar.game],
-    version_type: "release",
-    loaders: [parsedJar.loader],
-    featured: false,
-    status: "listed",
-    project_id: MODRINTH_ID,
-    file_parts: ["file_0"],
-    primary_file: "file_0",
-  };
-}
-
-function createCurseForgeDescriptor(parsedJar, version, changelog, clientId, serverId, loaderId, gameId) {
-  return {
-    changelog,
-    changelogType: "markdown",
-    displayName: `${version} · ${parsedJar.loader} · ${parsedJar.game}`,
-    gameVersions: [clientId, serverId, loaderId, gameId],
-    releaseType: "release",
-    ...(parsedJar.loader === "fabric"
-      ? { relations: { projects: [{ slug: "fabric-api", type: "requiredDependency" }] } }
-      : {}),
   };
 }
 
@@ -282,215 +319,118 @@ async function resolveCurseForgeGameId(game, apiKey, legacyFlat, minecraftTypeId
     true,
   );
   const directId = direct?.data?.gameVersionId;
-  if (directId) {
-    console.log("CF game", game, "-> gameVersionId", directId);
-    return directId;
-  }
+  if (directId) return directId;
   const slug = game.replace(/\./g, "-");
   const candidates = legacyFlat.filter((v) => v.name === game || v.slug === slug);
   for (const typeId of minecraftTypeIds) {
     const hit = candidates.find((v) => v.gameVersionTypeID === typeId);
-    if (hit) {
-      console.log("CF game", game, "-> legacy id", hit.id, "type", hit.gameVersionTypeID);
-      return hit.id;
-    }
+    if (hit) return hit.id;
   }
   throw new Error(`No CurseForge game version id for ${game}`);
 }
 
-async function uploadToModrinth(parsed, workspace, version, changelog, token, dryRun, state) {
-  const existing = await fetchExistingModrinth();
-  let uploaded = 0;
-  let skipped = 0;
-  for (const parsedJar of parsed) {
-    const body = createModrinthDescriptor(parsedJar, version, changelog);
-    if (
-      hasRecordedUpload(state, "modrinth", workspace, version, parsedJar) ||
-      existing.versionNumbers.has(body.version_number) ||
-      existing.fileNames.has(parsedJar.name)
-    ) {
-      console.log("Modrinth skip existing", body.version_number, parsedJar.name);
-      skipped += 1;
-      continue;
-    }
-    if (dryRun) {
-      console.log("[dry-run] Modrinth upload", body.version_number, parsedJar.name);
-      uploaded += 1;
-      continue;
-    }
-    const form = new FormData();
-    form.append("data", JSON.stringify(body));
-    form.append("file_0", new Blob([fs.readFileSync(parsedJar.jar)]), parsedJar.name);
-    const res = await fetch("https://api.modrinth.com/v2/version", {
-      method: "POST",
-      headers: { Authorization: token },
-      body: form,
-    });
-    const text = await res.text();
-    if (!res.ok) {
-      throw new Error(`Modrinth ${res.status} ${parsedJar.name} ${text.slice(0, 500)}`);
-    }
-    let remoteId = null;
-    try {
-      remoteId = JSON.parse(text).id ?? null;
-    } catch {}
-    recordUpload(state, "modrinth", workspace, version, parsedJar, remoteId);
-    console.log("Modrinth OK", body.version_number, parsedJar.name);
-    uploaded += 1;
-  }
-  console.log("Modrinth result:", uploaded, "upload(s),", skipped, "skip(s)");
+function createCurseForgeDescriptor(jar, version, changelog, clientId, serverId, loaderId, gameId) {
+  return {
+    changelog,
+    changelogType: "markdown",
+    displayName: versionLabel(version, jar),
+    gameVersions: [clientId, serverId, loaderId, gameId],
+    releaseType: "release",
+    ...(jar.loader === "fabric" ? { relations: { projects: [{ slug: "fabric-api", type: "requiredDependency" }] } } : {}),
+  };
 }
 
-async function resolveCurseForgeCreds(token, apiKey) {
-  // NightBeam local.env sometimes swaps CURSEFORGE_TOKEN / CURSEFORGE_API_KEY names.
-  // Core API wants x-api-key; legacy upload wants X-Api-Token.
-  for (const [coreKey, uploadToken] of [
-    [apiKey, token],
-    [token, apiKey],
-  ]) {
-    const res = await fetch(`https://api.curseforge.com/v1/mods/${CURSEFORGE_ID}`, {
-      headers: { "x-api-key": coreKey, Accept: "application/json" },
-    });
-    if (res.ok) {
-      return { coreKey, uploadToken };
-    }
+async function uploadToCurseForge(jars, version, changelog, token, apiKey, dryRun, state) {
+  if (dryRun && (!token || !apiKey)) {
+    for (const jar of jars) console.log("[dry-run] CurseForge", versionLabel(version, jar), jar.name);
+    return;
   }
-  throw new Error("Neither CURSEFORGE_TOKEN nor CURSEFORGE_API_KEY works as CurseForge Core API key");
-}
-
-async function uploadToCurseForge(parsed, workspace, version, changelog, token, apiKey, dryRun, state) {
-  const LOADER_IDS = { fabric: 7499, forge: 7498, neoforge: 10150 };
   const { coreKey, uploadToken } = await resolveCurseForgeCreds(token, apiKey);
   const existing = await fetchExistingCurseForge(coreKey);
   const ctx = await fetchCurseForgeVersionContext(uploadToken, coreKey);
   let uploaded = 0;
   let skipped = 0;
-  for (const parsedJar of parsed) {
-    const loaderId = LOADER_IDS[parsedJar.loader];
-    if (!loaderId) throw new Error(`Unknown loader for ${parsedJar.name}`);
-    const gameId = await resolveCurseForgeGameId(
-      parsedJar.game,
-      coreKey,
-      ctx.legacyFlat,
-      ctx.minecraftTypeIds,
-    );
-    const meta = createCurseForgeDescriptor(
-      parsedJar,
-      version,
-      changelog,
-      ctx.clientId,
-      ctx.serverId,
-      loaderId,
-      gameId,
-    );
-    if (
-      hasRecordedUpload(state, "curseforge", workspace, version, parsedJar) ||
-      existing.fileNames.has(parsedJar.name) ||
-      existing.displayNames.has(meta.displayName)
-    ) {
-      console.log("CurseForge skip existing", meta.displayName, parsedJar.name);
+  for (const jar of jars) {
+    const loaderId = CURSEFORGE_LOADER_IDS[jar.loader];
+    if (!loaderId) throw new Error(`Unknown loader for ${jar.name}`);
+    const gameId = await resolveCurseForgeGameId(jar.game, coreKey, ctx.legacyFlat, ctx.minecraftTypeIds);
+    const meta = createCurseForgeDescriptor(jar, version, changelog, ctx.clientId, ctx.serverId, loaderId, gameId);
+    if (hasRecordedUpload(state, "curseforge", version, jar) || existing.fileNames.has(jar.name) || existing.displayNames.has(meta.displayName)) {
+      console.log("CurseForge skip (already published)", meta.displayName, jar.name);
       skipped += 1;
       continue;
     }
     if (dryRun) {
-      console.log("[dry-run] CurseForge upload", meta.displayName, parsedJar.name);
+      console.log("[dry-run] CurseForge", meta.displayName, jar.name);
       uploaded += 1;
       continue;
     }
-    const cfForm = new FormData();
-    cfForm.append("metadata", JSON.stringify(meta));
-    cfForm.append("file", new Blob([fs.readFileSync(parsedJar.jar)]), parsedJar.name);
-    let lastText = "";
-    for (let attempt = 1; attempt <= 4; attempt++) {
-      const res = await fetch(
-        `https://minecraft.curseforge.com/api/projects/${CURSEFORGE_ID}/upload-file`,
-        { method: "POST", headers: { "X-Api-Token": uploadToken }, body: cfForm },
-      );
-      lastText = await res.text();
+    for (let attempt = 1; ; attempt++) {
+      const form = new FormData();
+      form.append("metadata", JSON.stringify(meta));
+      form.append("file", new Blob([fs.readFileSync(jar.jar)]), jar.name);
+      const res = await fetch(`https://minecraft.curseforge.com/api/projects/${CURSEFORGE_ID}/upload-file`, {
+        method: "POST",
+        headers: { "X-Api-Token": uploadToken },
+        body: form,
+      });
+      const text = await res.text();
       if (res.ok) {
         let remoteId = null;
         try {
-          remoteId = JSON.parse(lastText).id ?? null;
+          remoteId = JSON.parse(text).id ?? null;
         } catch {}
-        recordUpload(state, "curseforge", workspace, version, parsedJar, remoteId);
-        console.log("CurseForge OK", meta.displayName, parsedJar.name, lastText.slice(0, 120));
+        recordUpload(state, "curseforge", version, jar, remoteId);
+        console.log("CurseForge OK", meta.displayName, jar.name);
         uploaded += 1;
         break;
       }
-      if ((res.status === 429 || res.status === 503) && attempt < 4) {
-        console.warn("CurseForge", res.status, "for", parsedJar.name, "- retry", attempt);
+      if ((res.status === 429 || res.status >= 500) && attempt < 4) {
+        console.warn(`CurseForge ${res.status} for ${jar.name}, retrying in ${15 * attempt}s`);
         await new Promise((resolve) => setTimeout(resolve, 15000 * attempt));
         continue;
       }
-      throw new Error(`CurseForge ${res.status} ${parsedJar.name} ${lastText.slice(0, 500)}`);
+      throw new Error(`CurseForge ${res.status} ${jar.name} ${text.slice(0, 500)}`);
     }
   }
   console.log("CurseForge result:", uploaded, "upload(s),", skipped, "skip(s)");
 }
 
+// ------------------------------------------------------------------ main
+
 async function main() {
-  await loadEnv();
+  loadLocalEnv();
   const args = parseArgs(process.argv);
-  const version = args.version.replace(/^v/, "");
-  const workspaceDir = resolveWorkspaceDir(args.workspace);
-  const changelog = readChangelog(version, args.changelogFile);
+  // --games publishes only those Minecraft versions, e.g. roots added to an already released version.
+  const jars = collectJars(args.version, args.jarDir).map(parseJar).filter((j) => !args.games || args.games.includes(j.game));
+  if (!jars.length) throw new Error(`No ${JAR_PREFIX}*-${args.version}.jar in ${args.jarDir}`);
+  for (const game of args.games || []) {
+    const missing = SUPPORTED[game].filter((loader) => !jars.some((j) => j.game === game && j.loader === loader));
+    if (missing.length) throw new Error(`--games: no ${missing.join(", ")} jar for Minecraft ${game}`);
+  }
+  const changelog = readChangelog(args.version, args.changelogFile);
   const state = loadReleaseState();
-  const jars = collectWorkspaceJars(workspaceDir, version);
-  if (!jars.length) {
-    throw new Error(`No ${JAR_PREFIX}*-${version}.jar in ${path.relative(ROOT, workspaceDir)} build outputs`);
-  }
-  const parsed = jars.map(parseJar);
-  for (const parsedJar of parsed) {
-    if (!parsedJar.game) throw new Error(`Cannot parse MC version from ${parsedJar.name}`);
-  }
-  const loaders = new Set(parsed.map((parsedJar) => parsedJar.loader));
-  if (args.workspace === DEFAULT_WORKSPACE) {
-    if (parsed.length !== 2 || !loaders.has("fabric") || !loaders.has("neoforge")) {
-      throw new Error(
-        `Expected exactly one Fabric jar and one NeoForge jar for ${DEFAULT_WORKSPACE}; found ${parsed.map((p) => p.name).join(", ")}`,
-      );
-    }
-  }
-
+  const doModrinth = !args.curseforgeOnly;
+  const doCurseForge = !args.modrinthOnly;
   const { MODRINTH_TOKEN, CURSEFORGE_TOKEN, CURSEFORGE_API_KEY } = process.env;
-  if (!MODRINTH_TOKEN || !CURSEFORGE_TOKEN || !CURSEFORGE_API_KEY) {
-    throw new Error("Set MODRINTH_TOKEN, CURSEFORGE_TOKEN, CURSEFORGE_API_KEY (or secrets/local.env)");
+  if (!args.dryRun) {
+    if (doModrinth && !MODRINTH_TOKEN) throw new Error("MODRINTH_TOKEN is not set");
+    if (doCurseForge && (!CURSEFORGE_TOKEN || !CURSEFORGE_API_KEY)) throw new Error("CURSEFORGE_TOKEN and CURSEFORGE_API_KEY must be set");
   }
 
-  console.log(
-    `Uploading ${MOD_TITLE} ${version} from ${path.relative(ROOT, workspaceDir)} (${parsed.length} jars)`,
-  );
-  for (const parsedJar of parsed) {
-    console.log("  ", parsedJar.name, "->", parsedJar.loader, parsedJar.game);
-  }
+  console.log(`Publishing ${MOD_TITLE} ${args.version}${args.dryRun ? " (dry run)" : ""} (Modrinth ${MODRINTH_ID}, CurseForge ${CURSEFORGE_ID})`);
+  for (const j of jars) console.log(`  ${j.name} -> ${j.loader} ${j.game}`);
 
-  if (!args.curseforgeOnly) {
-    await uploadToModrinth(
-      parsed,
-      args.workspace,
-      version,
-      changelog,
-      MODRINTH_TOKEN,
-      args.dryRun,
-      state,
-    );
+  if (doModrinth) {
+    if (args.syncProject) await syncModrinthProject(MODRINTH_TOKEN, args.dryRun);
+    await uploadToModrinth(jars, args.version, changelog, MODRINTH_TOKEN, args.dryRun, state);
   }
-
-  if (!args.modrinthOnly) {
-    await uploadToCurseForge(
-      parsed,
-      args.workspace,
-      version,
-      changelog,
-      CURSEFORGE_TOKEN,
-      CURSEFORGE_API_KEY,
-      args.dryRun,
-      state,
-    );
+  if (doCurseForge) {
+    await uploadToCurseForge(jars, args.version, changelog, CURSEFORGE_TOKEN, CURSEFORGE_API_KEY, args.dryRun, state);
   }
 }
 
-main().catch((error) => {
-  console.error(error);
+main().catch((e) => {
+  console.error(e);
   process.exit(1);
 });

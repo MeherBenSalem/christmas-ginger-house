@@ -22,6 +22,8 @@ class Writer:
         if self.data:
             data = targets.translate(rel, data, self.target)
             rel = targets.translate_path(rel, self.target)
+        elif rel.startswith('models/') and targets.TARGETS[self.target].get('v263'):
+            data = targets.upgrade_model_263(data)
         path = os.path.join(self.root, rel)
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, 'w', encoding='utf-8') as fh:
@@ -141,7 +143,7 @@ LANG = {
 
 def generate(common_res, loader_res, target='1.20.1'):
     """loader_res: resources of the Forge (1.20.1) or NeoForge (1.21+) module."""
-    a = Writer(os.path.join(common_res, 'assets', MOD))
+    a = Writer(os.path.join(common_res, 'assets', MOD), target)
     d = Writer(os.path.join(common_res, 'data', MOD), target, True)
     mc = Writer(os.path.join(common_res, 'data', 'minecraft'), target, True)
     fg = Writer(os.path.join(loader_res, 'data', MOD), target, True)

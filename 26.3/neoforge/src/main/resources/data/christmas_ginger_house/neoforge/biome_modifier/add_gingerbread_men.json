@@ -1,0 +1,15 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#christmas_ginger_house:spawns_gingerbread_men",
+  "spawners": [
+    {
+      "type": "christmas_ginger_house:gingerbread_man",
+      "count": {
+        "type": "minecraft:uniform",
+        "min_inclusive": 2,
+        "max_inclusive": 3
+      },
+      "weight": 6
+    }
+  ]
+}

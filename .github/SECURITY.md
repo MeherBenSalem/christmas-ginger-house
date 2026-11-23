@@ -1,13 +1,33 @@
 # Security Policy
 
-## Supported versions
+## Supported Versions
 
-Security fixes are targeted at the latest release of each actively maintained Minecraft version tree in this repository (`1.20.1`, `1.21.1`, `26.1.2`, `26.2`).
+The project is maintained across these version roots:
 
-## Reporting a vulnerability
+| Version root | Minecraft line | Loaders |
+| --- | --- | --- |
+| `26.3/` | 26.3 | Fabric, NeoForge |
+| `26.2/` | 26.2 | Fabric, NeoForge |
+| `1.21.1/` | 1.21.1 | Fabric, NeoForge |
+| `1.20.1/` | 1.20.1 | Fabric, Forge |
 
-Please report security issues privately through GitHub Security Advisories for this repository:
+Older releases and other Minecraft versions may not receive backports.
 
-https://github.com/MeherBenSalem/christmas-ginger-house/security/advisories/new
+Security fixes may be applied selectively depending on the impact and the cost
+of porting them across isolated version roots.
 
-Do not open a public issue or pull request that discloses an exploit before maintainers have had a chance to investigate and release a fix.
+## Reporting A Vulnerability
+
+Please do not disclose security issues publicly before maintainers have had a
+chance to investigate and respond.
+
+Use GitHub's private vulnerability reporting for this repository
+(https://github.com/MeherBenSalem/christmas-ginger-house/security/advisories/new)
+for sensitive reports. Include:
+
+- affected version root and loader
+- reproduction steps or proof of concept
+- expected impact
+- any logs or stack traces that help confirm the issue
+
+If the issue is not security-sensitive, open a normal GitHub issue instead.

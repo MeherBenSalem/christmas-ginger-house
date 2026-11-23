@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.2
+
+- Added Minecraft 26.3 (Fabric + NeoForge). Everything from 2.0 "The Christmas Update" is in it.
+- Every supported version moves to 2.0.2: 1.20.1 (Fabric, Forge), 1.21.1, 26.2 and 26.3 (Fabric, NeoForge).
+  Nothing changes in play on 1.20.1, 1.21.1 or 26.2.
+- Each file now only loads on the Minecraft version it was made for (the 1.20.1 and 1.21.1 files used to
+  claim later 1.20.x/1.21.x versions too).
+- Minecraft 26.1.2 gets no new builds; its earlier files stay available.
+
 ## 2.0.1
 
 - Fixed a crash on Minecraft 26.1.2 and 26.2 (Fabric and NeoForge) when a Gingerbread Man or a

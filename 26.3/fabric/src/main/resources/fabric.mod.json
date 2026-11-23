@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${description}",
+  "authors": [
+    "${mod_author}"
+  ],
+  "contact": {
+    "homepage": "https://github.com/MeherBenSalem/christmas-ginger-house",
+    "sources": "https://github.com/MeherBenSalem/christmas-ginger-house"
+  },
+  "license": "${license}",
+  "icon": "assets/christmas_ginger_house/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "tn.nightbeam.christmasgingerhouse.ChristmasGingerHouseMod"
+    ],
+    "client": [
+      "tn.nightbeam.christmasgingerhouse.ChristmasGingerHouseClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}",
+    "java": ">=${java_version}"
+  }
+}
