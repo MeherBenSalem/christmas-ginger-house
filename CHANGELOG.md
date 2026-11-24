@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.3
+
+- Minecraft 26.3: naughty coal burns in furnaces again.
+- Minecraft 26.2 and 26.3: wild ginger generates in the world again and can be planted on grass.
+- Nothing changes on 1.20.1 (Fabric, Forge) or 1.21.1 (Fabric, NeoForge).
+
 ## 2.0.2
 
 - Added Minecraft 26.3 (Fabric + NeoForge). Everything from 2.0 "The Christmas Update" is in it.
