@@ -1,15 +1,13 @@
 # Marketing assets: 2.0 "The Christmas Update"
 
-Listing copy and artwork for CurseForge and Modrinth. Nothing here ships in the mod JARs.
+Listing copy and artwork for CurseForge (NightBeam publishes to CurseForge only). Nothing here ships in the mod JARs.
 
 ## Listing
 
 | File | Use |
 | --- | --- |
-| [`curseforge/description.md`](curseforge/description.md) | Full project description (Markdown; also works on Modrinth) |
+| [`curseforge/description.md`](curseforge/description.md) | Full project description (Markdown) |
 | [`curseforge/summary.txt`](curseforge/summary.txt) | Short project summary (237 characters) |
-| [`modrinth/description.md`](modrinth/description.md) | Modrinth project description: the CurseForge copy with the gallery section replaced by a pointer to the Gallery tab. Made by `python3 tools/make_modrinth_md.py .`; do not edit by hand |
-| [`modrinth/summary.txt`](modrinth/summary.txt) | Modrinth summary (the CurseForge one; Modrinth allows 256 characters) |
 | [`../patchnotes/`](../patchnotes/) | File changelog for each release (`Christmas-Ginger-House-<version>-PatchNotes.md`) |
 
 The description leads with the gingerbread house, then Christmas trees, presents, the advent calendar, decorations, creatures, Krampus, food and farming, gear, everything else, downloads and compatibility, the FAQ and a gallery. It ends with the **Follow NightBeam Studio** badge block (YouTube, Instagram, website, X, Facebook, Discord) and a source badge. Keep both when rewriting the copy.
@@ -21,7 +19,7 @@ Image links point at `raw.githubusercontent.com/MeherBenSalem/christmas-ginger-h
 The supported versions are listed in exactly two places:
 
 1. `VERSIONS` at the top of [`source/render.cjs`](source/render.cjs). Add one line, for example `{ minecraft: '26.3', loaders: ['Fabric', 'NeoForge'] },`, then rerun the script for `banner`.
-2. The table under **Downloads & Compatibility** in `curseforge/description.md` (and the version list in its intro), then rerun `python3 tools/make_modrinth_md.py .` for the Modrinth copy.
+2. The table under **Downloads & Compatibility** in `curseforge/description.md` (and the version list in its intro).
 
 ## Images
 

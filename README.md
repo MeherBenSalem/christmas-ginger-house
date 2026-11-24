@@ -80,15 +80,13 @@ Run the game with `:fabric:runClient`, `:neoforge:runClient` or `:forge:runClien
 ## Releasing
 
 CI (`.github/workflows/ci.yml`) builds all 8 jars on every push to `main` that touches the build. Publishing to
-Modrinth and CurseForge is `.github/workflows/publish.yml`, run by hand (`version`, `dry_run`) or by a `v*.*.*` tag;
+CurseForge is `.github/workflows/publish.yml`, run by hand (`version`, `dry_run`) or by a `v*.*.*` tag;
 it never runs on a plain push. It refuses a second release of the mod on the same day (Africa/Tunis), takes the jars
 from `releases/`, the GitHub Release or a build from source, and fails unless exactly the 8 jars are found. The
-upload goes through `scripts/upload_platforms.mjs` (Fabric API required on Fabric; files already on either site are
-skipped). It needs the secrets `MODRINTH_TOKEN`, `CURSEFORGE_TOKEN`, `CURSEFORGE_API_KEY` and the variables
-`MODRINTH_ID`, `CURSEFORGE_ID` (the workflow falls back to this project's IDs if the variables are unset).
-
-- Modrinth: `Ddgd2w2n` ([gingerbread-houses](https://modrinth.com/mod/Ddgd2w2n))
-- CurseForge: `1409805`
+upload goes through `scripts/upload_platforms.mjs` (Fabric API required on Fabric; files already on CurseForge are
+skipped). It needs the secrets `CURSEFORGE_TOKEN` (upload token) and `CURSEFORGE_API_KEY` (Core API key) and the
+variable `CURSEFORGE_ID` (the workflow falls back to this project's ID, `1409805`, if the variable is unset).
+NightBeam publishes to CurseForge only; the Modrinth page stays up but gets no new versions.
 
 1. Bump the version with `./gradlew syncVersion -PmodVersion=X.Y.Z` (writes `VERSION` and every workspace).
 2. Add `patchnotes/Christmas-Ginger-House-X.Y.Z-PatchNotes.md` (the release notes) and a `## X.Y.Z` section at
@@ -96,9 +94,8 @@ skipped). It needs the secrets `MODRINTH_TOKEN`, `CURSEFORGE_TOKEN`, `CURSEFORGE
 3. Prove it with a dry run (`gh workflow run publish.yml -f version=X.Y.Z -f dry_run=true`), then push a tag
    `vX.Y.Z` or run the **Publish** workflow by hand.
 
-The `update_listing` option on manual runs also refreshes the Modrinth project page from `marketing/modrinth/`
-(made by `python3 tools/make_modrinth_md.py .`) and `marketing/images/icon.png`. CurseForge has no API for the
-project description or logo, so paste `marketing/curseforge/description.md` there by hand.
+CurseForge has no API for the project description or logo, so paste `marketing/curseforge/description.md` there by
+hand.
 
 ## Contributing
 
