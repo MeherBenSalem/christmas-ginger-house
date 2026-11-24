@@ -87,7 +87,7 @@ upload goes through `scripts/upload_platforms.mjs` (Fabric API required on Fabri
 skipped). It needs the secrets `MODRINTH_TOKEN`, `CURSEFORGE_TOKEN`, `CURSEFORGE_API_KEY` and the variables
 `MODRINTH_ID`, `CURSEFORGE_ID` (the workflow falls back to this project's IDs if the variables are unset).
 
-- Modrinth: `Ddgd2w2n` ([the-gingerbread-house](https://modrinth.com/mod/the-gingerbread-house))
+- Modrinth: `Ddgd2w2n` ([gingerbread-houses](https://modrinth.com/mod/Ddgd2w2n))
 - CurseForge: `1409805`
 
 1. Bump the version with `./gradlew syncVersion -PmodVersion=X.Y.Z` (writes `VERSION` and every workspace).
